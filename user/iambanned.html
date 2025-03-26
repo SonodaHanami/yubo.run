@@ -1,0 +1,123 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>我被禁言了 | 羽bot</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/bot/favicon_32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/bot/favicon_16.png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MZCWWQJQQT"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MZCWWQJQQT');
+</script>
+<style>
+table {
+    /* width: 100%; */
+    table-layout: auto;
+}
+
+</style>
+</head>
+<body>
+<h1>我被禁言了</h1>
+<table id="table_login">
+    <tr>
+        <td colspan="2">
+            <p>本页面用于使用 <code>@羽bot 禁言我</code> 指令禁言了自己的群友的紧急自救</p>
+            <p>
+                首先你可以看看是否已在<a href="https://yubo.run/user/" target="_blank" rel="noopener noreferrer">个人中心</a>登录<br>
+                如果已登录，你可以直接点击群号下方的“解除禁言（？）”按钮解除禁言<br>
+                如果未登录，你可以在下方填入群号，然后点击“请求解除禁言”按钮，并按提示操作<br>
+            </p>
+            <p><br></p>
+        </td>
+    </tr>
+    <tr>
+        <td>群号: </td>
+        <td><input type="text" id="input_group_id"></td>
+    </tr>
+    <tr>
+        <td>QQ: </td>
+        <td><input type="text" id="input_user_id"></td>
+    </tr>
+    <tr id="tr_submit">
+        <td id="td_submit" colspan="2">
+            <button class="button" id="button_submit" onclick="set_group_ban();">请求解除禁言</button>
+        </td>
+    </tr>
+    <tr id="tr_login_error" style="display: none;">
+        <td colspan="2">对，对吗？请检查群号和QQ之后重试</td>
+    </tr>
+</table>
+<div id="div_waiting" style="display: none;">
+    <p id="p_login">正在请求解除禁言</p>
+    <p id="p_code" style="display: none;">请在群<span id="span_group_id"></span>内将群名片修改为方括号内的八位验证码【<span id="span_code"></span>】，然后点击“检测”按钮</p>
+    <p><button class="button" id="button_check" onclick="set_group_ban();">检测</button></p>
+    <p id="p_message"></p>
+</div>
+
+<script>
+var latest_login_request = new Date();
+
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
+
+function isInDesiredForm(str) {
+    var n = Math.floor(Number(str.trim()));
+    return n !== Infinity && String(n) === str && n >= 0;
+}
+
+function set_group_ban() {
+    let group_id = document.getElementById('input_group_id').value;
+    let user_id = document.getElementById('input_user_id').value;
+    if (!isInDesiredForm(group_id) || !isInDesiredForm(user_id)) {
+        console.log('？？？')
+        document.getElementById('tr_login_error').style.display = '';
+        return;
+    }
+    let payload = {
+        'user_id': user_id,
+        'group_id': group_id,
+        'login_token': '',
+        'code': '120',
+    }
+
+    if (document.getElementById('div_waiting').style.display == 'none') {
+        latest_login_request = new Date();
+        document.getElementById('input_group_id').disabled = true;
+        document.getElementById('input_user_id').disabled = true;
+        document.getElementById('button_submit').disabled = true;
+    }
+    else {
+        payload['code'] = document.getElementById('span_code').innerHTML;
+    }
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://yubo.run/api/kusa/set_group_ban', true);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.timeout = 5000;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+            let data = JSON.parse(xhr.responseText);
+            if (data.error) {
+                document.getElementById('tr_login_error').style.display = '';
+            }
+            else if (data.code) {
+                document.getElementById('p_code').style.display = '';
+                document.getElementById('span_group_id').innerHTML = group_id;
+                document.getElementById('span_code').innerHTML = data.code;
+            }
+            else if (data.message) {
+                document.getElementById('p_message').innerHTML = data.message;
+            }
+        }
+    }
+    xhr.send(JSON.stringify(payload));
+    document.getElementById('tr_submit').style.display = 'none';
+    document.getElementById('div_waiting').style.display = '';
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<title>关联雀魂牌谱屋ID | 羽bot</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/bot/favicon_32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/bot/favicon_16.png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MZCWWQJQQT"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MZCWWQJQQT');
+</script>
+</head>
+<body>
+<h1>关联雀魂牌谱屋ID</h1>
+<div id="div_error" style="display: none;">
+<p>请在 <input type="button" value="个人中心" onclick="goto_user_home();"> 登录；如果你已登录，请刷新重试</p>
+</div>
+<div id="div_main">
+<h3>第一步：</h3>
+<p>在 <a href="https://amae-koromo.sapk.ch/" target="_blank">雀魂牌谱屋</a> 通过名字查找玩家，进入详情页确认这是你的账号</p>
+<h3>第二步：</h3>
+<p></p>
+<p>地址栏的内容<span style="font-size: 4em; font-weight: bold; color: red;">全选</span>复制，粘贴到下面雀魂牌谱屋ID输入框里，然后提交</p>
+<p></p>
+<hr>
+<table>
+    <tr>
+        <td>QQ: </td>
+        <td><input type="text" id="user_id" disabled></td>
+    </tr>
+    <tr>
+        <td>雀魂牌谱屋ID: </td>
+        <td><input type="text" id="player_id"></td>
+    </tr>
+    <tr>
+        <td id="td_submit" colspan="2">
+            <input type="submit" id="input_submit" value="提交" onclick="set_user_player_id();">
+        </td>
+    </tr>
+</table>
+<hr>
+<div id="div_meter" style="display: none;"><meter id='meter' min='0' max='20' value='0' width="300px"></meter></div>
+<div id="div_output">提交后结果在这里显示</div>
+<hr>
+</div>
+
+<script>
+let start = new Date();
+
+function isInDesiredForm(str) {
+    var n = Math.floor(Number(str));
+    return n !== Infinity && String(n) === str && n >= 0;
+}
+
+function lock_button() {
+    document.getElementById('input_submit').value = `提交了，请稍候`;
+    document.getElementById('user_id').disabled = true;
+    document.getElementById('player_id').disabled = true;
+    document.getElementById('input_submit').disabled = true;
+}
+
+function unlock_button() {
+    document.getElementById('input_submit').value = `提交`;
+    // document.getElementById('user_id').disabled = false;
+    document.getElementById('player_id').disabled = false;
+    document.getElementById('input_submit').disabled = false;
+}
+
+function update_meter() {
+    let value = (new Date() - start) / 1000;
+    document.getElementById('meter').value = value;
+    if (value <= 20) {
+        setTimeout(update_meter, 100);
+    }
+}
+
+function set_user_player_id() {
+    lock_button();
+    document.getElementById('div_meter').style.display = '';
+    start = new Date();
+    update_meter();
+    document.getElementById('div_output').innerHTML = `请稍候`;
+    let user_id = document.getElementById("user_id").value;
+    let player_id = document.getElementById("player_id").value.match(/^(.*player\/)?(\d+)(.*)?$/);
+    if (player_id && player_id[2]) {
+        player_id = player_id[2];
+    }
+    if (!user_id || !player_id || user_id == '' || player_id == '' || !isInDesiredForm(user_id) || !isInDesiredForm(player_id)) {
+        console.log(player_id, !isInDesiredForm(player_id))
+        document.getElementById('div_output').innerHTML = `不对不对不对<br>请检查输入之后重试`;
+        unlock_button();
+        return
+    }
+    let payload = {
+        'login_token': parent.login_token,
+        'user_id': user_id,
+        'player_id': player_id,
+    }
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://yubo.run/api/majsoul/set_player_id', true);
+    xhr.setRequestHeader("Content-type","application/json");
+    xhr.timeout = 20000;
+    xhr.onreadystatechange = function() {
+        // readyState == 4说明请求已完成
+        if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+            // 从服务器获得数据
+            let data = JSON.parse(xhr.responseText);
+            // console.log('load default_settings', data);
+            d = new Date();
+            document.getElementById('div_meter').style.display = 'none';
+            document.getElementById('div_output').innerHTML = `${d}<br>${data.message.replace('\n', '<br>')}`;
+            parent.get_login_info();
+            unlock_button();
+        }
+    };
+    xhr.ontimeout = function() {
+        d = new Date();
+        document.getElementById('div_meter').style.display = 'none';
+        document.getElementById('div_output').innerHTML = `${d}<br>请求超时，请稍后重试`;
+        unlock_button();
+    };
+    xhr.send(JSON.stringify(payload));
+}
+
+function goto_user_home() {
+    window.location.href = `https://yubo.run/user/`;
+}
+
+function inIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
+if (!(inIframe()) || !(parent.login_token)) {
+    document.getElementById('div_error').style.display = '';
+    document.getElementById('div_main').style.display = 'none';
+}
+
+document.getElementById("user_id").value = parent.login_user_id;
+
+</script>
+
+</body>
+</html>

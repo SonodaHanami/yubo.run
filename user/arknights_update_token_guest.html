@@ -1,0 +1,213 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<title>更新token游客入口 | 羽bot</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/bot/favicon_32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/bot/favicon_16.png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MZCWWQJQQT"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MZCWWQJQQT');
+</script>
+</head>
+<body>
+<h1>更新token游客入口</h1>
+<a href="https://yubo.run/arknights/ji/">返回集集统计总榜（暂定）</a>
+<div id="div_channel">
+    <p><button style="transform-origin:0 0; scale: 2; margin-bottom: 2em; width: 8em;" onclick="set_channel('1')">我是官服玩家</button></p>
+    <p><button style="transform-origin:0 0; scale: 2; margin-bottom: 2em; width: 8em;" onclick="set_channel('2')">我是B服玩家</button></p>
+</div>
+<div id="div_main" style="display: none;">
+<h3>第一步：</h3>
+<p>在 <a href="https://ak.hypergryph.com/user/" target="_blank">https://ak.hypergryph.com/user/</a> 登录</p>
+<h3>第二步：</h3>
+<p id="p_channel_1" style="display: none;">
+    <a href="https://web-api.hypergryph.com/account/info/hg" target="_blank">打开这个token页面</a>，你将看到如下的内容
+</p>
+<p id="p_channel_2" style="display: none;">
+    <a href="https://web-api.hypergryph.com/account/info/ak-b" target="_blank">打开这个token页面</a>，你将看到如下的内容
+</p>
+<textarea id="textarea_token" style="width: 100%;">
+{"code":0,"data":{"content":"这里是token，官服的24位，B服的两百多位"},"msg":"接口会返回您的鹰角网络通行证账号的登录凭证，此凭证可以用于鹰角网络账号系统校验您登录的有效性。泄露登录凭证属于极度危险操作，为了您的账号安全，请勿将此凭证以任何形式告知他人！"}
+</textarea>
+<p id="p_what_is_select_all"><button class="button" id="button_what_is_select_all" onclick="what_is_select_all();">什么叫全选？</button></p>
+<p><span style="font-size: 4em; font-weight: bold; color: red;">全选</span>并复制<span style="font-weight: bold; color: red;">token页面里的内容</span>，粘贴到下面token输入框里，然后提交</p>
+<p>
+    <b>泄露登录凭证确实属于极度危险操作</b>，如有任何疑问请随时询问羽波
+    <button class="button" id="button_switch_token_usage" onclick="switch_token_usage();">点击<span id="span_switch_token_usage">展开</span>羽bot对token能请求的数据的使用情况</button></a>
+</p>
+<div id="div_token_usage" style="display: none;">
+<p>
+    在游客入口，羽bot对token能请求的数据的使用情况如下：<br>
+    羽bot能使用token查询到并且会使用的数据：集成战略#2-傀影与猩红孤钻个人统计及回顾、集成战略#3-水月与深蓝之树个人统计、集成战略#4-探索者的银凇止境个人统计<br>
+    羽bot能使用token查询到但是<b>不会</b>使用的数据：充值记录、源石记录、抽卡记录<br>
+</p>
+</div>
+<div id="div_channel_2" style="display: none;">
+<h3>第三步：</h3>
+<p>B服玩家除了token以外，还需要额外提交token2，原因和获取方法详见 <a href="https://yubo.run/bot/docs/update_token_b.html" target="_blank">B服更新token</a></p>
+</div>
+<p></p>
+<hr>
+<table>
+    <tr>
+        <td>token: </td>
+        <td><input type="text" id="token"></td>
+    </tr>
+    <tr id="tr_token2" style="display: none;">
+        <td>token2: </td>
+        <td><input type="text" id="token2"></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <input type="radio" name="token_option" id="radio_token_option_join_ji_stats_named" checked><label for="radio_token_option_join_ji_stats_named">加入集集统计总榜（暂定），如果已有数据则更新</label><br>
+            <input type="radio" name="token_option" id="radio_token_option_join_ji_stats_anonymous"><label for="radio_token_option_join_ji_stats_anonymous"><b>匿名</b>加入集集统计总榜（暂定），如果已有数据则更新</label><br>
+            <input type="radio" name="token_option" id="radio_token_option_exit_ji_stats"><label for="radio_token_option_exit_ji_stats">退出集集统计总榜（暂定）</label><br>
+            <input type="checkbox" id="checkbox_token_logout"><label for="checkbox_token_logout">并且退出token的登录状态</label><br>
+        </td>
+    </tr>
+    <tr>
+        <td id="td_submit" colspan="2">
+            <button id="button_submit" onclick="set_guest_token();">提交</button>
+        </td>
+    </tr>
+</table>
+<hr>
+<div id="div_meter" style="display: none;"><meter id='meter' min='0' max='20' value='0' width="300px"></meter></div>
+<div id="div_output">提交后结果在这里显示</div>
+<hr>
+</div>
+
+<script>
+let start = new Date();
+
+function lock_button() {
+    document.getElementById('button_submit').innerHTML = `提交了，请稍候`;
+    document.getElementById('token').disabled = true;
+    document.getElementById('token2').disabled = true;
+    document.getElementById('button_submit').disabled = true;
+}
+
+function unlock_button() {
+    document.getElementById('button_submit').innerHTML = `提交`;
+    document.getElementById('token').disabled = false;
+    document.getElementById('token2').disabled = false;
+    document.getElementById('button_submit').disabled = false;
+}
+
+function update_meter() {
+    let value = (new Date() - start) / 1000;
+    document.getElementById('meter').value = value;
+    if (value <= 20) {
+        setTimeout(update_meter, 100);
+    }
+}
+
+function set_channel(c) {
+    channel = c;
+    document.getElementById('div_channel').style.display = 'none';
+    document.getElementById('div_main').style.display = '';
+    document.getElementById(`p_channel_${channel}`).style.display = '';
+    if (channel == '2') {
+        document.getElementById('div_channel_2').style.display = '';
+        document.getElementById('tr_token2').style.display = '';
+    }
+}
+
+function set_guest_token() {
+    lock_button();
+    document.getElementById('div_meter').style.display = '';
+    start = new Date();
+    update_meter();
+    document.getElementById('div_output').innerHTML = `请稍候`;
+    let token = document.getElementById("token").value;
+    let token2 = document.getElementById("token2").value;
+    if (!token || token == '') {
+        document.getElementById('div_output').innerHTML = `不对不对不对<br>请检查输入之后重试`;
+        unlock_button();
+        return
+    }
+    let option = 'none';
+    if (document.getElementById('radio_token_option_join_ji_stats_named').checked) {
+        option = 'join_ji_stats_named';
+    }
+    else if (document.getElementById('radio_token_option_join_ji_stats_anonymous').checked) {
+        option = 'join_ji_stats_anonymous';
+    }
+    else if (document.getElementById('radio_token_option_exit_ji_stats').checked) {
+        option = 'exit_ji_stats';
+    }
+    let token_logout = document.getElementById('checkbox_token_logout').checked;
+    let payload = {
+        'channel': channel,
+        'token': token,
+        'token2': token2,
+        'option': option,
+        'logout': token_logout,
+    }
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://yubo.run/api/arknights/set_guest_token', true);
+    xhr.setRequestHeader("Content-type","application/json");
+    xhr.timeout = 30000;
+    xhr.onreadystatechange = function() {
+        // readyState == 4说明请求已完成
+        if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+            // 从服务器获得数据
+            let data = JSON.parse(xhr.responseText);
+            // console.log('load default_settings', data);
+            d = new Date();
+            document.getElementById('div_meter').style.display = 'none';
+            document.getElementById('div_output').innerHTML = `${d}<br>${data.message}`;
+            // parent.get_login_info();
+            unlock_button();
+        }
+    };
+    xhr.ontimeout = function() {
+        d = new Date();
+        document.getElementById('div_meter').style.display = 'none';
+        document.getElementById('div_output').innerHTML = `${d}<br>请求超时，请稍后重试`;
+        unlock_button();
+    };
+    xhr.send(JSON.stringify(payload));
+}
+
+function what_is_select_all() {
+    let input = document.getElementById('textarea_token');
+    input.select(); // 选中文本
+    document.getElementById('p_what_is_select_all').innerHTML = `
+        <span style="font-size: 4em; font-weight: bold; color: red;">👆这就叫全选</span>
+        <button class="button" onclick="document.getElementById('p_what_is_select_all').remove()">我明白了</button>
+    `;
+}
+
+function switch_token_usage(key) {
+    if (document.getElementById('div_token_usage').style.display == 'none') {
+        document.getElementById('div_token_usage').style.display = '';
+        document.getElementById('span_switch_token_usage').innerHTML = '收起';
+    }
+    else {
+        document.getElementById('div_token_usage').style.display = 'none';
+        document.getElementById('span_switch_token_usage').innerHTML = '展开';
+    }
+}
+
+function goto_user_home() {
+    window.location.href = `https://yubo.run/user/`;
+}
+
+function inIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
+
+</script>
+
+</body>
+</html>
