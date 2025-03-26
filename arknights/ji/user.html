@@ -1,0 +1,228 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>个人集集统计 | 羽bot</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/bot/favicon_32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/bot/favicon_16.png">
+<script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue@3"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/element-plus"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/element-plus/dist/index.css"/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MZCWWQJQQT"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MZCWWQJQQT');
+</script>
+<!-- <script src="echarts.js"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<style>
+#app {
+    margin: 0 20px;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+    text-align: center;
+}
+
+.span_channel_1 {
+    user-select: none;
+    color: rgb(32, 201, 255);
+}
+.span_channel_2 {
+    user-select: none;
+    color: rgb(255, 108, 162);
+}
+
+.div_chart {
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #EBEEF5;
+    height: 400px;
+}
+</style>
+</head>
+<body>
+    <div id="app">
+        <el-page-header @back="goto_user_home" content="个人中心"></el-page-header>
+        <h1 style="text-align: center">个人集集统计</h1>
+        <el-tabs type="card" tab-position="top" v-model="selectingTab" v-loading="isLoading">
+            <el-tab-pane label="总览" name="main">
+                <p><span :class="{ span_channel_1: ji_stats_data.channel == 1, span_channel_2: ji_stats_data.channel == 2 }">■</span>[[ player_info_str ]]</p>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_main" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_heatmap_node_all" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_heatmap_node_invest_all" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_line_node_all" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin: 0 10px;">
+                    <h2>萨卡兹的无终奇语</h2>
+                    <p>最高通过 [[ ji_stats_data.rogue_5.latest.clear_info_str ]]</p>
+                    <p>累计通过节点 [[ ji_stats_data.rogue_5.latest.node ]]</p>
+                    <p>累计存入源石锭 [[ ji_stats_data.rogue_5.latest.invest ]]</p>
+                    <!-- <p>累计通关记录 无数据</p> -->
+                    <hr>
+                    <h2>探索者的银凇止境</h2>
+                    <p>最高通过 [[ ji_stats_data.rogue_4.latest.clear_info_str ]]</p>
+                    <p>累计通过节点 [[ ji_stats_data.rogue_4.latest.node ]]</p>
+                    <p>累计存入源石锭 [[ ji_stats_data.rogue_4.latest.invest ]]</p>
+                    <p>累计通关记录 [[ ji_stats_data.rogue_4.latest.total_clear_count ]]</p>
+                    <hr>
+                    <h2>水月与深蓝之树</h2>
+                    <p>最高通过 [[ ji_stats_data.rogue_3.latest.clear_info_str ]]</p>
+                    <p>累计通过节点 [[ ji_stats_data.rogue_3.latest.node ]]</p>
+                    <p>累计存入源石锭 [[ ji_stats_data.rogue_3.latest.invest ]]</p>
+                    <p>累计通关记录 [[ ji_stats_data.rogue_3.latest.total_clear_count ]]</p>
+                    <hr>
+                    <h2>傀影与猩红孤钻</h2>
+                    <p>累计通过节点 [[ ji_stats_data.rogue_2.latest.nodes ]]</p>
+                    <p>累计存入源石锭 [[ ji_stats_data.rogue_2.latest.bank ]]</p>
+                    <p>累计通关记录 [[ ji_stats_data.rogue_2.latest.total_clear_count ]]</p>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="萨卡兹的无终奇语" name="rogue_5">
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_node_invest_5" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_node_5" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_invest_5" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="探索者的银凇止境" name="rogue_4">
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_node_invest_4" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_clear_4" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_node_4" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_invest_4" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="水月与深蓝之树" name="rogue_3">
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_node_invest_3" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_clear_3" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_node_3" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_invest_3" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="傀影与猩红孤钻" name="rogue_2">
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_node_invest_2" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_clear_2" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_node_2" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; height: 450px;">
+                        <div style="width: 100%;">
+                            <div id="div_chart_invest_2" class="div_chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+
+<script src="user.js"></script>
+
+</body>
+</html>

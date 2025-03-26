@@ -1,0 +1,178 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>羽波的明日方舟小玩具</title>
+    <!-- <link rel="icon" href="./favicon.ico"> -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MZCWWQJQQT"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-MZCWWQJQQT');
+    </script>
+    <style>
+        /* CSSFX, Copyright (c) 2019 Jonathan Olaleye, Licensed under MIT License */
+        /* https://github.com/jolaleye/cssfx/blob/master/LICENSE */
+        .balls {
+            width: 3.5em;
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .balls div {
+            width: 0.8em;
+            height: 0.8em;
+            border-radius: 50%;
+            background-color: #fc2f70;
+            transform: translateY(-100%);
+            animation: wave 0.8s ease-in-out alternate infinite;
+        }
+
+        .balls div:nth-of-type(1) {
+            animation-delay: -0.4s;
+        }
+
+        .balls div:nth-of-type(2) {
+            animation-delay: -0.2s;
+        }
+
+        @keyframes wave {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="div_0" style="display: none;">
+        <table class="table_text" id="table_main_navbar">
+            <tr>
+                <td>
+                    <!-- <div class="div_button" id="div_navbar_button_settings" onclick="handle_sub_content('settings');">⚙</div> -->
+                </td>
+                <td>
+                    <!-- <div class="div_red_spot" id="div_red_spot_update_log" style="display: none;"></div> -->
+                    <!-- <div class="div_button" id="div_navbar_button_update_log" onclick="handle_sub_content('update_log');">⚠</div> -->
+                </td>
+                <!-- <td>
+                    <div class="div_red_spot" id="div_red_spot_mail" style="display: none;"></div>
+                    <div class="div_button" id="div_navbar_button_mail" onclick="handle_sub_content('mail');">✉</div>
+                </td> -->
+                <td>
+                    <!-- <div class="div_button" id="div_navbar_button_document" onclick="handle_sub_content('document');">📖</div> -->
+                </td>
+                <td style="width: auto;">&nbsp;</td>
+                <td style="width: 10em; text-align: right; padding-right: 1em;">
+                    <div id="div_current_datetime"></div>
+                </td>
+                <td>
+                    <div class="div_button" onclick="location.reload();">⟳</div>
+                </td>
+            </tr>
+        </table>
+        <table class="table_text" id="table_sub_content_header" style="display: none;">
+            <tr>
+                <td id="td_overlay_header_back">
+                    <div id="div_overlay_header_back" onclick="handle_sub_content();">＜</div>
+                </td>
+                <th id="th_overlay_header_title"><span id="span_overlay_header_icon">⚙</span><span id="span_overlay_header_title">设置</span></th>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <div id="div_contents">
+            <div id="div_main">
+                <table class="table_text" id="table_main">
+                    <tr>
+                        <th colspan="1">
+                            <div class="elm_outline elm_white" id="div_title">
+                                羽波的明日方舟小玩具
+                            </div>
+                        </th>
+                    </tr>
+                    <tr><td><div class="div_button" onclick="window.location='./kaiju'">肉鸽开局生成器</div></td></tr>
+                    <tr><td><div class="div_button" onclick="window.location='./dichotomy'">干员二分器</div></td></tr>
+                    <tr><td><div class="div_button" onclick="window.location='./ququ'">IM-2 斗蛐蛐计算器</div></td></tr>
+                    <tr><td><div class="div_button" onclick="window.location='./ququ2'">IM-2 斗蛐蛐计算器 2</div></td></tr>
+                    <tr><td></td></tr>
+                    <tr><td colspan="1"><h2>集集统计</h2></td></tr>
+                    <tr><td><div class="div_button" onclick="window.location='./ji/'">集集统计总榜（暂定）</div></td></tr>
+                    <tr><td><div class="div_button" onclick="window.location='./ji/user.html'">个人集集统计</div></td></tr>
+                    <tr><td><div class="div_button" onclick="window.location='./ji/server.html'">全服集集统计</div></td></tr>
+                </table>
+            </div>
+            <div id="div_settings" class="div_sub_contents" style="display: none;">
+                暂时没有设置喵
+            </div>
+            <div id="div_update_log" class="div_sub_contents" style="display: none;"></div>
+            <div id="div_mail" class="div_sub_contents" style="display: none;"></div>
+            <div id="div_document" class="div_sub_contents" style="display: none;"></div>
+        </div>
+        <div id="div_link">
+            <a href="https://yubo.run/arknights" style="color: #2222;">
+                yubo.run/arknights
+            </a>
+        </div>
+        <textarea id="textarea_copy">作者：羽波</textarea>
+    </div>
+    <div id="div_loading" style="text-align: left;">
+        <p id="p_loading">加载中，请稍候</p>
+        <div id="div_balls" class="balls">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <script>
+        let current_timestamp = new Date().getTime();
+        let head = document.head || document.getElementsByTagName("head")[0];
+        fetch(`./css/common.css?t=${current_timestamp}`)
+        .then(response => {
+            if (response.status == 200) {
+                return response.text();
+            }
+            else {
+                throw ['common.css', response.status];
+            }
+        })
+        .then(data => {
+            let node = document.createElement('style');
+            node.innerHTML = data;
+            head.appendChild(node);
+            return fetch(`./js/ququ.js?t=${current_timestamp}`)
+        })
+        .then(response => {
+            if (response.status == 200) {
+                return response.text();
+            }
+            else {
+                throw ['ququ.js', response.status];
+            }
+        })
+        .then(data => {
+            let node = document.createElement('script');
+            node.innerHTML = data;
+            head.appendChild(node);
+        })
+        .then(nothing => {
+            // 页面加载完成时执行
+            document.getElementById('div_loading').style.display = 'none';
+            document.getElementById('div_0').style.display = '';
+            update_current_datetime();
+        })
+        .catch(exception => {
+            error_message = `加载 ${exception[0]} 时遇到错误 ${exception[1]}，请重试`;
+            console.log(error_message);
+            console.log(exception);
+            document.getElementById('p_loading').innerHTML = error_message;
+            document.getElementById('div_balls').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
