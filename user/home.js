@@ -22,6 +22,7 @@ const templateSource = `
 </body>
 </html>
 `;
+const template = Handlebars.compile(templateSource);
 
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
@@ -83,20 +84,26 @@ const app = createApp({
         input_set_mail: '',
         input_set_mail_code: '',
         input_set_bilibili_uid: '',
-        set_bilibili_uid_comment: '',
+        input_adj: '',
+        input_adj_id: '',
+        input_title: '',
+        input_title_id: '',
+        input_title_idea: '',
         is_input_login_identifier_disabled: false,
+        is_input_set_bilibili_uid_disabled: false,
         is_setting_user_id: false,
         is_setting_user_id_code: false,
         is_setting_mail: false,
         is_setting_mail_code: false,
         is_setting_bilibili_uid: false,
         is_setting_title: false,
-        // is_setting_bilibili_uid_sql: false,
+        set_bilibili_uid_comment: '',
         error_message_login: undefined,
         error_message_set_user_id: undefined,
         error_message_set_mail: undefined,
         error_message_set_bilibili_uid: undefined,
         error_message_set_title: undefined,
+        error_message_submit_idea: undefined,
         nickname: '',
         nickname_dict: {},
         nickname_option_list: [{value: '', label: '（不显示）'}],
@@ -175,23 +182,22 @@ const app = createApp({
     },
     watch: {
         login_status(newVal) {
-            console.log('login_status changed:', newVal); // 调试 login_status 的变化
+            // 调试 login_status 的变化
+            console.log('login_status changed:', newVal);
         },
-        selectedValue(newVal) {
-            console.log('监视到值变化:', newVal);
-        }
     },
     methods: {
-        handleChange(value) {
-            console.log('选择变化:', value);
-            // 可以在这里添加其他处理逻辑
+        handleCopy(text) {
+            console.log('点击复制');
+            const input = document.createElement('input');
+            document.body.appendChild(input);
+            input.value = text; // 修改文本框的内容
+            input.select(); // 选中文本
+            document.execCommand('copy'); // 执行浏览器复制命令
+            document.body.removeChild(input);
+            console.log('复制成功');
         },
-        handleUserChange(user) {
-            console.log('选择的用户:', user)
-            // 可以访问用户的所有属性
-            console.log('用户年龄:', user.age, user.id, user.name)
-            console.log('selectedUser:', this.selectedUser)
-        },
+
         handleEnter(event) {
             // 根据输入框的 id 区分
             const input_id = event.target.id;
@@ -214,17 +220,6 @@ const app = createApp({
             }
 
 
-        },
-
-        handleCopy(text) {
-            console.log('点击复制');
-            const input = document.createElement('input');
-            document.body.appendChild(input);
-            input.value = text; // 修改文本框的内容
-            input.select(); // 选中文本
-            document.execCommand('copy'); // 执行浏览器复制命令
-            document.body.removeChild(input);
-            console.log('复制成功');
         },
 
         save_login_data() {
@@ -467,10 +462,10 @@ const app = createApp({
 
         handle_user_setting(action) {
             const that = this;
-            let text = '';
+            let value = '';
             if (action == 'set_user_id') {
                 if (isNumeric(this.input_set_user_id)) {
-                    text = this.input_set_user_id;
+                    value = this.input_set_user_id;
                 }
                 else {
                     that.error_message_set_user_id = '你这QQ号对吗？';
@@ -479,8 +474,8 @@ const app = createApp({
             }
             else if (action == 'set_mail') {
                 if (isEmail(this.input_set_mail)) {
-                    text = this.input_set_mail;
-                    if (text == this.login_mail) {
+                    value = this.input_set_mail;
+                    if (value == this.login_mail) {
                         that.is_setting_mail = true;
                         that.is_setting_mail_code = false;
                         that.error_message_set_mail = '已关联该邮箱';
@@ -495,11 +490,11 @@ const app = createApp({
                 }
             }
             else if (action == 'set_mail_code') {
-                text = this.input_set_mail_code;
+                value = this.input_set_mail_code;
             }
             else if (action == 'set_bilibili_uid') {
                 if (isNumeric(this.input_set_bilibili_uid)) {
-                    text = this.input_set_bilibili_uid;
+                    value = this.input_set_bilibili_uid;
                 }
                 else {
                     that.error_message_set_bilibili_uid = '你这UID对吗？';
@@ -507,13 +502,22 @@ const app = createApp({
                 }
             }
             else if (action == 'set_nickname') {
-                text = this.nickname;
+                value = this.nickname;
+            }
+            else if (action == 'set_adj') {
+                value = this.input_adj_id;
+            }
+            else if (action == 'set_title') {
+                value = this.input_title_id;
+            }
+            else if (action == 'submit_idea_adj' || action == 'submit_idea_title') {
+                value = this.input_title_idea;
             }
             let payload = {
                 'identifier': that.login_identifier,
                 'login_token': that.login_token,
                 'action': action,
-                'text': text,
+                'value': value,
             }
             let xhr = new XMLHttpRequest();
             xhr.open('POST', `https://yubo.run/api/kusa/setting`, true);
@@ -545,7 +549,16 @@ const app = createApp({
                         }
                         else {
                             that.set_bilibili_uid_comment = data.comment;
+                            that.is_input_set_bilibili_uid_disabled = true;
                             that.error_message_set_bilibili_uid = undefined;
+                        }
+                    }
+                    if (action == 'submit_idea_adj' || action == 'submit_idea_title') {
+                        if (data.error) {
+                            that.error_message_submit_idea = data.error;
+                        }
+                        else {
+                            that.error_message_submit_idea = data.success;
                         }
                     }
                 }
@@ -565,7 +578,10 @@ const app = createApp({
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
                     that.title_data = JSON.parse(xhr.responseText);
-                    that.error_message_set_title = '';
+                    that.error_message_set_title = `成功加载了
+                        ${that.title_data.adj.length}个前缀、
+                        ${that.title_data.title.length}个称号，
+                        数据最后更新于 ${new Date(1000 * that.title_data.last_update_timestamp)}`;
                 }
                 else {
                     that.error_message_set_title = '加载失败，请稍后重试';
@@ -608,6 +624,11 @@ const app = createApp({
                 {
                     value: 'arknights_nickname',
                     label: `${this.login_info_data.arknights.nickname}（明日方舟）` || '未关联明日方舟账号',
+                    disabled: !this.login_info_data.arknights.nickname,
+                },
+                {
+                    value: 'arknights_nickname_clear',
+                    label: `${this.login_info_data.arknights.nickname.split('#')[0]}（明日方舟，不含#数字部分）` || '未关联明日方舟账号',
                     disabled: !this.login_info_data.arknights.nickname,
                 },
             ]
@@ -701,6 +722,68 @@ const app = createApp({
             if (tab.paneName == 'groups') {
                 this.get_group_info();
             }
+        },
+
+        create_filter_adj(queryString) {
+            return (adj_item) => {
+                return adj_item.value.indexOf(queryString) === 0;
+            }
+        },
+
+        create_filter_title(queryString) {
+            return (title_item) => {
+                return title_item.value.indexOf(queryString) === 0;
+            }
+        },
+
+        query_search_adj(queryString, cb) {
+            const results = queryString
+                ? this.title_data.adj.filter(this.create_filter_adj(queryString))
+                : this.title_data.adj;
+            // call callback function to return suggestions
+            cb(results);
+        },
+
+        query_search_title(queryString, cb) {
+            const results = queryString
+                ? this.title_data.title.filter(this.create_filter_title(queryString))
+                : this.title_data.title;
+            // call callback function to return suggestions
+            cb(results)
+        },
+
+        handle_select_adj(item) {
+            this.input_adj_id = item.id;
+            this.title_adj = item.value;
+            this.handle_user_setting('set_adj');
+        },
+
+        handle_select_title(item) {
+            this.input_title_id = item.id;
+            this.title_title = item.value;
+            this.handle_user_setting('set_title');
+        },
+
+        handle_handlebar(target) {
+            let cate_str;
+            if (target == 'adj') {
+                cate_str = '前缀';
+            }
+            if (target == 'title') {
+                cate_str = '称号';
+            }
+            const data = {
+                title: `${cate_str}列表`,
+                content: `这是${cate_str}列表，你可以使用Ctrl+F搜索想要的${cate_str}`,
+                items: Object.values(this.title_data[target]).map(item => item.value),
+            }
+            const html = template(data);
+            const blob = new Blob([html], { type: 'text/html' });
+            window.open(URL.createObjectURL(blob), '_blank');
+        },
+
+        handle_submit_idea(cate) {
+            this.handle_user_setting(``);
         },
 
         handle_switch_permission(module_name, permission_name) {

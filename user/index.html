@@ -166,18 +166,6 @@ table {
                         <el-text v-if="login_user_id && nickname != 'null'">
                             {{ nickname_dict[nickname] }}
                         </el-text>
-                        <!-- <el-text v-if="login_user_id">
-                            {{ nickname }}({{ login_user_id }})
-                        </el-text>
-                        <el-text v-if="!login_user_id && login_mail">
-                            {{ nickname }}({{ login_user_id }})
-                        </el-text>
-                        <el-text v-if="login_group_id">
-                            @
-                        </el-text>
-                        <el-text v-if="login_group_id">
-                            [{{ login_group_name }}({{ login_group_id }})]
-                        </el-text> -->
                         <el-text>
                             【{{ title_adj }}{{ title_title }}】
                         </el-text>
@@ -273,13 +261,14 @@ table {
                             v-model="input_set_bilibili_uid" v-if="is_setting_bilibili_uid" :disabled="is_input_set_bilibili_uid_disabled"
                             @keyup.enter="handleEnter"
                         ></el-input>
-                        <el-button type="success" id="button_login" v-if="is_setting_bilibili_uid" v-on:click="handle_user_setting('set_bilibili_uid')">提交</el-button>
+                        <el-button type="success" id="button_login" v-if="is_setting_bilibili_uid" :disabled="is_input_set_bilibili_uid_disabled"
+                            v-on:click="handle_user_setting('set_bilibili_uid')">提交</el-button>
                         <template v-if="set_bilibili_uid_comment">
                             <el-space>
                             <!-- <el-col> -->
                                 <el-text>请使用该哔哩哔哩账号在</el-text>
                                 <el-link type="primary" href="https://t.bilibili.com/1047865303226122247" target="_blank">这条动态</el-link>
-                                <el-text>下发送评论并等待羽波人工确认：</el-text>
+                                <el-text>下发送评论并等待羽波<b>人工确认</b>：</el-text>
                                 <el-text>{{ set_bilibili_uid_comment }}</el-text>
                                 <el-button v-on:click="handleCopy(set_bilibili_uid_comment)">复制</el-button>
                             <!-- </el-col> -->
@@ -308,26 +297,50 @@ table {
                         <el-text>当前称号：</el-text>
                         <el-text>{{ title_adj }}{{ title_title }}</el-text>
                         <el-button type="default" id="button_set_title" v-if="!is_setting_title" v-on:click="handle_set_title">修改</el-button>
-                        <el-text v-if="error_message_set_title">{{ error_message_set_title }}</el-text>
-                    </el-row>
+                    </el-space>
                 </el-row>
                 <el-row v-if="is_setting_title">
-                    <el-space>
-                        <el-text>修改称号</el-text>
-                        <el-autocomplete />
-                        <el-autocomplete />
-                    </el-row>
+                    <div>
+                        <el-row>
+                            <el-text v-if="error_message_set_title">{{ error_message_set_title }}</el-text>
+                        </el-row>
+                        <el-row>
+                            <el-space>
+                                <el-button type="default" v-on:click="handle_handlebar('adj')">查看所有可用的前缀</el-button>
+                                <el-button type="default" v-on:click="handle_handlebar('title')">查看所有可用的称号</el-button>
+                            </el-space>
+                        </el-row>
+                        <el-row>
+                            <el-space>
+                                <el-text>修改称号</el-text>
+                                <el-autocomplete
+                                    v-model="input_adj"
+                                    :fetch-suggestions="query_search_adj"
+                                    clearable
+                                    placeholder="前缀"
+                                    @select="handle_select_adj"
+                                ></el-autocomplete>
+                                <el-autocomplete
+                                    v-model="input_title"
+                                    :fetch-suggestions="query_search_title"
+                                    clearable
+                                    placeholder="称号"
+                                    @select="handle_select_title"
+                                ></el-autocomplete>
+                            </el-space>
+                        </el-row>
+                    </div>
                 </el-row>
-                <el-row v-if="false">
-                    <el-link type="primary" href="https://yubo.run/bot/docs/" target="_blank">查看所有可用的称号</el-link>
-                </el-row>
-                <el-row v-if="false">
+                <el-row>
                     <el-space>
                         <el-text>称号征集</el-text>
-                        <el-input type="text" id="input_title" placeholder="" v-model="input_title" style="width: 240px;"></el-input>
-                        <el-button type="success" id="button_login" v-on:click="login">作为前缀投稿</el-button>
-                        <el-button type="success" id="button_login" v-on:click="login">作为称号投稿</el-button>
-                    </el-row>
+                        <el-input type="text" id="input_title_idea" placeholder="前缀或称号" v-model="input_title_idea" style="width: 240px;"></el-input>
+                        <el-button type="success" v-on:click="handle_user_setting('submit_idea_adj')">作为前缀投稿</el-button>
+                        <el-button type="success" v-on:click="handle_user_setting('submit_idea_title')">作为称号投稿</el-button>
+                    </el-space>
+                </el-row>
+                <el-row>
+                    <el-text v-if="error_message_submit_idea">{{ error_message_submit_idea }}</el-text>
                 </el-row>
             </template>
         </el-tab-pane>
