@@ -273,8 +273,8 @@ const app = createApp({
             this.login_identifier = this.input_login_identifier;
             this.login_code = this.input_login_code;
             if (!(isNumeric(this.login_identifier) || isEmail(this.login_identifier))) {
-                console.log('格式错误');
-                that.error_message_login = '不对不对不对';
+                that.error_message_login = '不对不对不对，请输入正确格式的QQ号或邮箱';
+                that.is_input_login_identifier_disabled = false;
                 return;
             }
             if (isNumeric(that.login_identifier) || (isEmail(that.login_identifier) && that.login_code == '')) {
