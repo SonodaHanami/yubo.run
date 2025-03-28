@@ -618,17 +618,23 @@ const app = createApp({
                 },
                 {
                     value: 'bilibili_nickname',
-                    label: `${this.bilibili_nickname}（哔哩哔哩）` || '未关联哔哩哔哩账号',
+                    label: this.bilibili_nickname
+                        ? `${this.bilibili_nickname}（哔哩哔哩）`
+                        : '未关联哔哩哔哩账号',
                     disabled: !this.bilibili_nickname,
                 },
                 {
                     value: 'arknights_nickname',
-                    label: `${this.login_info_data.arknights.nickname}（明日方舟）` || '未关联明日方舟账号',
+                    label: this.login_info_data.arknights.nickname
+                        ? `${this.login_info_data.arknights.nickname}（明日方舟）`
+                        : '未关联明日方舟账号',
                     disabled: !this.login_info_data.arknights.nickname,
                 },
                 {
                     value: 'arknights_nickname_clear',
-                    label: `${this.login_info_data.arknights.nickname.split('#')[0]}（明日方舟，不含#数字部分）` || '未关联明日方舟账号',
+                    label: this.login_info_data.arknights.nickname
+                        ? `${this.login_info_data.arknights.nickname.split('#')[0]}（明日方舟，不含#数字部分）`
+                        : '未关联明日方舟账号',
                     disabled: !this.login_info_data.arknights.nickname,
                 },
             ]
@@ -780,10 +786,6 @@ const app = createApp({
             const html = template(data);
             const blob = new Blob([html], { type: 'text/html' });
             window.open(URL.createObjectURL(blob), '_blank');
-        },
-
-        handle_submit_idea(cate) {
-            this.handle_user_setting(``);
         },
 
         handle_switch_permission(module_name, permission_name) {
