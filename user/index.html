@@ -105,6 +105,7 @@ table {
                 <el-link type="primary" href="https://yubo.run/arknights/ji/" target="_blank">集集统计总榜（暂定）</el-link>
                 <el-link type="primary" href="https://yubo.run/arknights/ji/user.html" target="_blank">个人集集统计</el-link>
                 <el-link type="primary" href="https://yubo.run/arknights/ji/server.html" target="_blank">全服集集统计</el-link>
+                <el-link type="success" href="https://yubo.run/ququ/" target="_blank">好得不能再好了！泰拉投资大师课</el-link>
             </el-space>
         </el-row>
     </template>
@@ -160,7 +161,7 @@ table {
         </div>
     </template>
 
-    <el-tabs type="card" v-model="selecting_tab" v-if="login_status == 'ok'" @tab-click="handle_tab_click">
+    <el-tabs type="card" v-if="login_status == 'ok'" v-model="selecting_tab" @tab-click="handle_tab_click">
         <el-tab-pane label="总览" name="main">
             <template v-if="login_status == 'ok'">
                 <el-row>
@@ -359,7 +360,7 @@ table {
                 </el-row>
             </template>
         </el-tab-pane>
-        <el-tab-pane label="群列表" name="groups">
+        <el-tab-pane v-if="login_identifier == login_user_id" label="群列表" name="groups">
             <el-table id="table_groups" stripe border v-loading="is_loading"
                 table-layout="auto" style="width: 100%" :row-style="{height: 0}"
                 :data="groups_data"
@@ -389,13 +390,13 @@ table {
                 </el-table-column>
             </el-table>
         </el-tab-pane>
-        <el-tab-pane label="更新明日方舟token" name="arknights_update_token" lazy>
+        <el-tab-pane v-if="login_identifier == login_user_id" label="更新明日方舟token" name="arknights_update_token" lazy>
             <iframe ref="iframe" :src="src_arknights_update_token" width="100%" height="720" frameborder="0"></iframe>
         </el-tab-pane>
-        <el-tab-pane label="关联SteamID" name="steam_set_player_id" lazy>
+        <el-tab-pane v-if="login_identifier == login_user_id" label="关联SteamID" name="steam_set_player_id" lazy>
             <iframe ref="iframe" :src="src_steam_set_player_id" width="100%" height="720" frameborder="0"></iframe>
         </el-tab-pane>
-        <el-tab-pane label="关联雀魂牌谱屋ID" name="majsoul_set_player_id" lazy>
+        <el-tab-pane v-if="login_identifier == login_user_id" label="关联雀魂牌谱屋ID" name="majsoul_set_player_id" lazy>
             <iframe ref="iframe" :src="src_majsoul_set_player_id" width="100%" height="720" frameborder="0"></iframe>
         </el-tab-pane>
     </el-tabs>
