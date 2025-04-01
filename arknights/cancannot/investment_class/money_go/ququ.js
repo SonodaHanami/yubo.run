@@ -630,7 +630,7 @@ const app = createApp({
         get_title_data() {
             // 加载称号数据
             const that = this;
-            this.error_message_set_title = '正在加载称号数据……';
+            that.error_message_set_title = '正在加载称号数据……';
             let xhr = new XMLHttpRequest();
             xhr.open('GET', `https://yubo.run/user/title.json`, true);
             xhr.setRequestHeader('Content-type', 'application/json');
@@ -733,34 +733,6 @@ const app = createApp({
 
         handle_tab_click(tab, event) {
             console.log(tab.paneName);
-        },
-
-        create_filter_adj(queryString) {
-            return (adj_item) => {
-                return adj_item.value.indexOf(queryString) === 0;
-            }
-        },
-
-        create_filter_title(queryString) {
-            return (title_item) => {
-                return title_item.value.indexOf(queryString) === 0;
-            }
-        },
-
-        query_search_adj(queryString, cb) {
-            const results = queryString
-                ? this.title_data.adj.filter(this.create_filter_adj(queryString))
-                : this.title_data.adj;
-            // call callback function to return suggestions
-            cb(results);
-        },
-
-        query_search_title(queryString, cb) {
-            const results = queryString
-                ? this.title_data.title.filter(this.create_filter_title(queryString))
-                : this.title_data.title;
-            // call callback function to return suggestions
-            cb(results)
         },
 
         select_adj(item) {

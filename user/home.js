@@ -58,6 +58,7 @@ function majsoul_get_channel(player_id) {
 
 // import { ref } from 'vue';
 const { createApp } = Vue;
+
 const app = createApp({
     el: '#app',
     data: () => ({
@@ -556,7 +557,7 @@ const app = createApp({
         get_title_data() {
             // 加载称号数据
             const that = this;
-            this.error_message_set_title = '正在加载称号数据……';
+            that.error_message_set_title = '正在加载称号数据……';
             let xhr = new XMLHttpRequest();
             xhr.open('GET', `https://yubo.run/user/title.json`, true);
             xhr.setRequestHeader('Content-type', 'application/json');
@@ -747,34 +748,6 @@ const app = createApp({
             }
         },
 
-        create_filter_adj(queryString) {
-            return (adj_item) => {
-                return adj_item.value.indexOf(queryString) === 0;
-            }
-        },
-
-        create_filter_title(queryString) {
-            return (title_item) => {
-                return title_item.value.indexOf(queryString) === 0;
-            }
-        },
-
-        query_search_adj(queryString, cb) {
-            const results = queryString
-                ? this.title_data.adj.filter(this.create_filter_adj(queryString))
-                : this.title_data.adj;
-            // call callback function to return suggestions
-            cb(results);
-        },
-
-        query_search_title(queryString, cb) {
-            const results = queryString
-                ? this.title_data.title.filter(this.create_filter_title(queryString))
-                : this.title_data.title;
-            // call callback function to return suggestions
-            cb(results)
-        },
-
         select_adj(item) {
             this.input_adj_id = item.id;
             this.title_adj = item.value;
@@ -872,6 +845,7 @@ const app = createApp({
     },
     // delimiters: ['[[', ']]'],
 })
+
 
 app.use(ElementPlus);
 app.mount('#app');

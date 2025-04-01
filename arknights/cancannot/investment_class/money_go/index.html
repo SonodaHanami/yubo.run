@@ -576,20 +576,34 @@ table {
                                 <el-row>
                                     <el-space>
                                         <el-text>修改称号</el-text>
-                                        <el-autocomplete
+                                        <el-select
                                             v-model="input_adj"
-                                            :fetch-suggestions="query_search_adj"
-                                            clearable
+                                            filterable
                                             placeholder="前缀"
-                                            @select="select_adj"
-                                        ></el-autocomplete>
-                                        <el-autocomplete
+                                            style="width: 240px"
+                                            @change="select_adj"
+                                        >
+                                            <el-option
+                                                v-for="item in title_data.adj"
+                                                :key="item.id"
+                                                :label="item.value"
+                                                :value="item">
+                                            </el-option>
+                                        </el-select>
+                                        <el-select
                                             v-model="input_title"
-                                            :fetch-suggestions="query_search_title"
-                                            clearable
+                                            filterable
                                             placeholder="称号"
-                                            @select="select_title"
-                                        ></el-autocomplete>
+                                            style="width: 240px"
+                                            @change="select_title"
+                                        >
+                                            <el-option
+                                                v-for="item in title_data.title"
+                                                :key="item.id"
+                                                :label="item.value"
+                                                :value="item">
+                                            </el-option>
+                                        </el-select>
                                     </el-space>
                                 </el-row>
                             </div>

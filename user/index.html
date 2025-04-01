@@ -111,7 +111,9 @@ table {
     <el-row id="p_kale">加载中，请稍候；如果你一直只能看到这行字，那么很可能是卡了，请刷新重试，或者换个网络换个浏览器后重试</el-row>
     <template v-if="login_status == 'null' || login_status == 'waiting_code_mail'">
         <div>
-            <el-alert type="info" title="群？什么群？">游玩《好得不能再好了！泰拉投资大师课》无需加群，使用邮箱登录即可；有关群的更多信息请查阅文档</el-alert>
+            <el-alert type="info" title="群？什么群？">
+                游玩《好得不能再好了！泰拉投资大师课》无需加群，使用邮箱登录即可；有关群的更多信息请查阅文档
+            </el-alert>
             <el-row><el-text>未登录，请先登录</el-text></el-row>
             <el-row>
                 <el-input type="text" id="input_login_identifier" placeholder="QQ号 或 邮箱地址" style="width: 240px;"
@@ -312,20 +314,34 @@ table {
                         <el-row>
                             <el-space>
                                 <el-text>修改称号</el-text>
-                                <el-autocomplete
+                                <el-select
                                     v-model="input_adj"
-                                    :fetch-suggestions="query_search_adj"
-                                    clearable
+                                    filterable
                                     placeholder="前缀"
-                                    @select="select_adj"
-                                ></el-autocomplete>
-                                <el-autocomplete
+                                    style="width: 240px"
+                                    @change="select_adj"
+                                >
+                                    <el-option
+                                        v-for="item in title_data.adj"
+                                        :key="item.id"
+                                        :label="item.value"
+                                        :value="item">
+                                    </el-option>
+                                </el-select>
+                                <el-select
                                     v-model="input_title"
-                                    :fetch-suggestions="query_search_title"
-                                    clearable
+                                    filterable
                                     placeholder="称号"
-                                    @select="select_title"
-                                ></el-autocomplete>
+                                    style="width: 240px"
+                                    @change="select_title"
+                                >
+                                    <el-option
+                                        v-for="item in title_data.title"
+                                        :key="item.id"
+                                        :label="item.value"
+                                        :value="item">
+                                    </el-option>
+                                </el-select>
                             </el-space>
                         </el-row>
                     </div>
