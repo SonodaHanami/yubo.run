@@ -288,7 +288,15 @@ const app = createApp({
 
         enter() {
             this.is_in_lobby = true;
-            this.get_login_info();
+            this.load_login_data();
+            if (this.login_token && this.login_identifier) {
+                this.login_status = 'waiting';
+                this.get_login_info();
+            }
+            else {
+                // 未登录直接跳转
+                window.location.href = `https://yubo.run/user/`;
+            }
         },
 
         get_room_info_or_room_list() {
