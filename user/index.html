@@ -110,7 +110,8 @@ table {
     </template>
     <el-row id="p_kale">加载中，请稍候；如果你一直只能看到这行字，那么很可能是卡了，请刷新重试，或者换个网络换个浏览器后重试</el-row>
     <template v-if="login_status == 'null' || login_status == 'waiting_code_mail'">
-        <div style="text-align: center">
+        <div>
+            <el-alert type="info" title="群？什么群？">游玩《好得不能再好了！泰拉投资大师课》无需加群，使用邮箱登录即可；有关群的更多信息请查阅文档</el-alert>
             <el-row><el-text>未登录，请先登录</el-text></el-row>
             <el-row>
                 <el-input type="text" id="input_login_identifier" placeholder="QQ号 或 邮箱地址" style="width: 240px;"
@@ -146,13 +147,13 @@ table {
     <template v-if="login_status == 'null' || login_status == 'waiting' || login_status == 'waiting_code_qq' || login_status == 'waiting_code_mail' || error_message_login">
         <div>
             <el-row v-if="login_status == 'null' || login_status == 'waiting_code_mail'">
-                <el-button type="success" id="button_login" v-on:click="login">登录</el-button>
+                <el-button type="success" id="button_login" @click="login">登录</el-button>
             </el-row>
             <el-row v-if="login_status == 'waiting' || login_status == 'waiting_code_qq' || login_status == 'waiting_code_mail'">
-                <el-button type="warning" id="button_cancel_login" v-on:click="clear_login_data">取消登录</el-button>
+                <el-button type="warning" id="button_cancel_login" @click="clear_login_data">取消登录</el-button>
             </el-row>
             <el-row v-if="error_message_login">
-                {{ error_message_login }}
+                <el-text>{{ error_message_login }}</el-text>
             </el-row>
         </div>
     </template>
@@ -163,23 +164,21 @@ table {
                 <el-row>
                     <el-space>
                         <el-text>欢迎</el-text>
-                        <el-text v-if="login_user_id && nickname != 'null'">
-                            {{ nickname_dict[nickname] }}
-                        </el-text>
                         <el-text>
                             【{{ title_adj }}{{ title_title }}】
                         </el-text>
+                        <el-text v-if="login_user_id && nickname != 'null'">
+                            {{ nickname_dict[nickname] }}
+                        </el-text>
+                        <el-button @click="handle_selecting_tab('user');">用户设置</el-button>
+                        <el-button type="danger" @click="logout">退出登录</el-button>
                     </el-space>
                 </el-row>
-                <el-row>
-                    <el-button @click="handle_selecting_tab('user');">用户设置</el-button>
-                    <el-button type="danger" @click="logout">退出登录</el-button>
-                </el-row>
                 <el-divider></el-divider>
-                <template v-if="!login_user_id">
+                <template v-if="login_identifier != login_user_id">
                     <el-text>使用QQ登录以解锁群聊限定功能</el-text>
                 </template>
-                <template v-if="login_user_id">
+                <template v-if="login_identifier == login_user_id">
                     <el-row>
                         <el-text>你和羽bot同时在 {{ same_group_count }} 个群里</el-text>
                     </el-row>
@@ -188,9 +187,9 @@ table {
                             <el-text>
                                 你可以在  
                             </el-text>
-                            <el-text>
-                                <el-button @click="handle_selecting_tab('groups');">群列表</el-button>
-                            </el-text>
+                            <el-button @click="handle_selecting_tab('groups');">
+                                群列表
+                            </el-button>
                             <el-text>
                                 中看到各项功能的开启状态；群主和管理员拥有开关这些功能的权限
                             </el-text>
@@ -224,11 +223,11 @@ table {
                         <el-text>QQ：</el-text>
                         <el-text v-if="login_user_id">{{ login_user_id }}</el-text>
                         <el-text v-if="!login_user_id">未关联</el-text>
-                        <el-button type="default" id="button_set_user_id" v-if="!is_setting_user_id && !login_user_id" v-on:click="is_setting_user_id=!0;">关联QQ</el-button>
+                        <el-button type="default" id="button_set_user_id" v-if="!is_setting_user_id && !login_user_id" @click="is_setting_user_id=!0;">关联QQ</el-button>
                         <el-input type="text" id="input_set_user_id" placeholder="QQ号" style="width: 240px;"
                             v-model="input_set_user_id" v-if="is_setting_user_id" @keyup.enter="handleEnter"
                         ></el-input>
-                        <el-button type="success" id="button_login" v-if="is_setting_user_id" v-on:click="handle_user_setting('set_user_id')">提交</el-button>
+                        <el-button type="success" id="button_login" v-if="is_setting_user_id" @click="handle_user_setting('set_user_id')">提交</el-button>
                         <el-text v-if="is_setting_user_id_code">请在5分钟内用 QQ {{ input_set_user_id }} 在群里发送验证码 {{ login_code }}</el-text>
                         <el-text v-if="error_message_set_user_id">{{ error_message_set_user_id }}</el-text>
                     </el-space>
@@ -238,15 +237,15 @@ table {
                         <el-text>邮箱：</el-text>
                         <el-text v-if="login_mail">{{ login_mail }}</el-text>
                         <el-text v-if="!login_mail">未关联</el-text>
-                        <el-button type="default" id="button_set_mail" v-if="!is_setting_mail && !is_setting_mail_code" v-on:click="is_setting_mail=!0">修改</el-button>
+                        <el-button type="default" id="button_set_mail" v-if="!is_setting_mail && !is_setting_mail_code" @click="is_setting_mail=!0">修改</el-button>
                         <el-input type="text" id="input_set_mail" placeholder="邮箱地址" style="width: 240px;"
                             v-model="input_set_mail" v-if="is_setting_mail" @keyup.enter="handleEnter"
                         ></el-input>
                         <el-input type="text" id="input_set_mail_code" placeholder="邮件验证码" style="width: 240px;"
                             v-model="input_set_mail_code" v-if="is_setting_mail_code" @keyup.enter="handleEnter"
                         ></el-input>
-                        <el-button type="success" id="button_login" v-if="is_setting_mail" v-on:click="is_setting_mail=!1;is_setting_mail_code=!0;handle_user_setting('set_mail');">提交</el-button>
-                        <el-button type="success" id="button_login" v-if="is_setting_mail_code" v-on:click="handle_user_setting('set_mail_code')">提交</el-button>
+                        <el-button type="success" id="button_login" v-if="is_setting_mail" @click="is_setting_mail=!1;is_setting_mail_code=!0;handle_user_setting('set_mail');">提交</el-button>
+                        <el-button type="success" id="button_login" v-if="is_setting_mail_code" @click="handle_user_setting('set_mail_code')">提交</el-button>
                         <el-text v-if="is_setting_mail_code && !error_message_set_mail">验证码已发送至 {{ input_set_mail }}</el-text>
                         <el-text v-if="error_message_set_mail">{{ error_message_set_mail }}</el-text>
                     </el-space>
@@ -256,13 +255,13 @@ table {
                         <el-text>哔哩哔哩：</el-text>
                         <el-link v-if="bilibili_uid" type="primary" :href="'https://space.bilibili.com/' + bilibili_uid" target="_blank">{{ bilibili_nickname }}({{ bilibili_uid }})</el-link>
                         <el-text v-if="!bilibili_uid">未关联</el-text>
-                        <el-button type="default" id="button_login" v-if="!is_setting_bilibili_uid" v-on:click="is_setting_bilibili_uid=!0">关联哔哩哔哩账号</el-button>
+                        <el-button type="default" id="button_login" v-if="!is_setting_bilibili_uid" @click="is_setting_bilibili_uid=!0">关联哔哩哔哩账号</el-button>
                         <el-input type="text" id="input_set_bilibili_uid" placeholder="哔哩哔哩UID" style="width: 240px;"
                             v-model="input_set_bilibili_uid" v-if="is_setting_bilibili_uid" :disabled="is_input_set_bilibili_uid_disabled"
                             @keyup.enter="handleEnter"
                         ></el-input>
                         <el-button type="success" id="button_login" v-if="is_setting_bilibili_uid" :disabled="is_input_set_bilibili_uid_disabled"
-                            v-on:click="handle_user_setting('set_bilibili_uid')">提交</el-button>
+                            @click="handle_user_setting('set_bilibili_uid')">提交</el-button>
                         <template v-if="set_bilibili_uid_comment">
                             <el-space>
                             <!-- <el-col> -->
@@ -270,7 +269,7 @@ table {
                                 <el-link type="primary" href="https://t.bilibili.com/1047865303226122247" target="_blank">这条动态</el-link>
                                 <el-text>下发送评论并等待羽波<b>人工确认</b>：</el-text>
                                 <el-text>{{ set_bilibili_uid_comment }}</el-text>
-                                <el-button v-on:click="handleCopy(set_bilibili_uid_comment)">复制</el-button>
+                                <el-button @click="handleCopy(set_bilibili_uid_comment)">复制</el-button>
                             <!-- </el-col> -->
                             </el-space>
                         </template>
@@ -296,7 +295,7 @@ table {
                     <el-space>
                         <el-text>当前称号：</el-text>
                         <el-text>{{ title_adj }}{{ title_title }}</el-text>
-                        <el-button type="default" id="button_set_title" v-if="!is_setting_title" v-on:click="handle_set_title">修改</el-button>
+                        <el-button type="default" id="button_set_title" v-if="!is_setting_title" @click="set_title">修改</el-button>
                     </el-space>
                 </el-row>
                 <el-row v-if="is_setting_title">
@@ -306,8 +305,8 @@ table {
                         </el-row>
                         <el-row>
                             <el-space>
-                                <el-button type="default" v-on:click="handle_handlebar('adj')">查看所有可用的前缀</el-button>
-                                <el-button type="default" v-on:click="handle_handlebar('title')">查看所有可用的称号</el-button>
+                                <el-button type="default" @click="handle_handlebar('adj')">查看所有可用的前缀</el-button>
+                                <el-button type="default" @click="handle_handlebar('title')">查看所有可用的称号</el-button>
                             </el-space>
                         </el-row>
                         <el-row>
@@ -318,14 +317,14 @@ table {
                                     :fetch-suggestions="query_search_adj"
                                     clearable
                                     placeholder="前缀"
-                                    @select="handle_select_adj"
+                                    @select="select_adj"
                                 ></el-autocomplete>
                                 <el-autocomplete
                                     v-model="input_title"
                                     :fetch-suggestions="query_search_title"
                                     clearable
                                     placeholder="称号"
-                                    @select="handle_select_title"
+                                    @select="select_title"
                                 ></el-autocomplete>
                             </el-space>
                         </el-row>
@@ -333,10 +332,10 @@ table {
                 </el-row>
                 <el-row>
                     <el-space>
-                        <el-text>称号征集</el-text>
+                        <el-text>称号征集：</el-text>
                         <el-input type="text" id="input_title_idea" placeholder="前缀或称号" v-model="input_title_idea" style="width: 240px;"></el-input>
-                        <el-button type="success" v-on:click="handle_user_setting('submit_idea_adj')">作为前缀投稿</el-button>
-                        <el-button type="success" v-on:click="handle_user_setting('submit_idea_title')">作为称号投稿</el-button>
+                        <el-button type="default" @click="handle_user_setting('submit_idea_adj')">作为前缀投稿</el-button>
+                        <el-button type="default" @click="handle_user_setting('submit_idea_title')">作为称号投稿</el-button>
                     </el-space>
                 </el-row>
                 <el-row>
@@ -360,15 +359,15 @@ table {
                 <el-table-column label="设置">
                     <template v-slot="scope">
                         <el-row>
-                            <el-checkbox v-model="scope.row.settings.arknights" @change="handle_switch_module(scope.row.group_id, 'arknights')" :disabled="!scope.row.is_admin">明日方舟 - 集集雷达</el-checkbox>
+                            <el-checkbox v-model="scope.row.settings.arknights" @change="switch_module(scope.row.group_id, 'arknights')" :disabled="!scope.row.is_admin">明日方舟 - 集集雷达</el-checkbox>
                         </el-row>
                         <el-row>
-                            <el-checkbox v-model="scope.row.settings.steam_playing_dota2" @change="handle_switch_module(scope.row.group_id, 'steam_playing_dota2')" :disabled="!scope.row.is_admin">Steam - 游戏状态雷达 - Dota 2</el-checkbox>
-                            <el-checkbox v-model="scope.row.settings.steam_playing_all_other_games" @change="handle_switch_module(scope.row.group_id, 'steam_playing_all_other_games')" :disabled="!scope.row.is_admin">Steam - 游戏状态雷达 - 所有其他游戏</el-checkbox>
-                            <el-checkbox v-model="scope.row.settings.dota2_report" @change="handle_switch_module(scope.row.group_id, 'steam_dota2_report')" :disabled="!scope.row.is_admin">Steam - 刀刀雷达</el-checkbox>
+                            <el-checkbox v-model="scope.row.settings.steam_playing_dota2" @change="switch_module(scope.row.group_id, 'steam_playing_dota2')" :disabled="!scope.row.is_admin">Steam - 游戏状态雷达 - Dota 2</el-checkbox>
+                            <el-checkbox v-model="scope.row.settings.steam_playing_all_other_games" @change="switch_module(scope.row.group_id, 'steam_playing_all_other_games')" :disabled="!scope.row.is_admin">Steam - 游戏状态雷达 - 所有其他游戏</el-checkbox>
+                            <el-checkbox v-model="scope.row.settings.dota2_report" @change="switch_module(scope.row.group_id, 'steam_dota2_report')" :disabled="!scope.row.is_admin">Steam - 刀刀雷达</el-checkbox>
                         </el-row>
                         <el-row>
-                            <el-checkbox v-model="scope.row.settings.majsoul" @change="handle_switch_module(scope.row.group_id, 'majsoul')" :disabled="!scope.row.is_admin">雀魂 - 雀魂雷达</el-checkbox>
+                            <el-checkbox v-model="scope.row.settings.majsoul" @change="switch_module(scope.row.group_id, 'majsoul')" :disabled="!scope.row.is_admin">雀魂 - 雀魂雷达</el-checkbox>
                         </el-row>
                     </template>
                 </el-table-column>

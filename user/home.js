@@ -121,14 +121,14 @@ const app = createApp({
                         type: 'checkbox',
                         content: `在 集集统计总榜（暂定） 公开集集统计数据`,
                         model: undefined,
-                        onchange: () => {handle_switch_permission('arknights', 'ji_stats_open');},
+                        onchange: () => {switch_permission('arknights', 'ji_stats_open');},
                         show: false,
                     },
                     {
                         type: 'checkbox',
                         content: `如果公开，那么匿名`,
                         model: undefined,
-                        onchange: () => {handle_switch_permission('arknights', 'ji_stats_anonymous');},
+                        onchange: () => {switch_permission('arknights', 'ji_stats_anonymous');},
                         show: false,
                     },
                 ]
@@ -178,7 +178,7 @@ const app = createApp({
         window.get_login_info = this.get_login_info;
         window.set_group_ban = this.set_group_ban;
         window.handle_selecting_tab = this.handle_selecting_tab;
-        window.handle_switch_permission = this.handle_switch_permission;
+        window.switch_permission = this.switch_permission;
     },
     watch: {
         login_status(newVal) {
@@ -247,23 +247,6 @@ const app = createApp({
                 this.login_identifier = window.localStorage['login_identifier'];
                 this.login_token = window.localStorage['login_token'];
                 return true;
-            }
-        },
-
-        update_meter() {
-            now = new Date();
-            if (this.login_status == 'waiting' || this.login_status == 'waiting_code_qq') {
-                // document.getElementById('meter_login').value = (now - this.latest_login_request) / 1000;
-                // document.getElementById('meter_check').value = (now - this.latest_check_request) / 1000;
-                this.meter_login_value = (now - this.latest_login_request) / 1000;
-                this.meter_check_value = (now - this.latest_check_request) / 1000;
-                let countdown_minute = Math.floor((this.latest_login_request - now + 300000) / 60000);
-                let countdown_second = Math.floor((this.latest_login_request - now + 300000) / 1000 % 60);
-                // document.getElementById('span_login_countdown').innerHTML = `${countdown_minute}:${countdown_second}`;
-                this.login_countdown_str = `${countdown_minute}:${countdown_second}`;
-                if (now - this.latest_login_request < 300000) {
-                    setTimeout(this.update_meter, 10);
-                }
             }
         },
 
@@ -338,7 +321,7 @@ const app = createApp({
             xhr.send(JSON.stringify(payload));
             this.update_meter();
         },
-        
+
         logout() {
             const that = this;
             let payload = {
@@ -361,7 +344,7 @@ const app = createApp({
             }
             xhr.send(JSON.stringify(payload));
         },
-        
+
         clear_login_data() {
             this.login_identifier = '';
             this.login_token = '';
@@ -373,7 +356,7 @@ const app = createApp({
             this.save_login_data();
             window.location.reload();
         },
-        
+
         get_login_info() {
             const that = this;
             let payload = {
@@ -512,6 +495,10 @@ const app = createApp({
             }
             else if (action == 'submit_idea_adj' || action == 'submit_idea_title') {
                 value = this.input_title_idea;
+                if (value.length == 0) {
+                    that.error_message_submit_idea = '提交的内容不能为空';
+                    return
+                }
             }
             let payload = {
                 'identifier': that.login_identifier,
@@ -566,10 +553,9 @@ const app = createApp({
             xhr.send(JSON.stringify(payload));
         },
 
-        handle_set_title() {
-            const that = this;
-            this.is_setting_title = true;
+        get_title_data() {
             // 加载称号数据
+            const that = this;
             this.error_message_set_title = '正在加载称号数据……';
             let xhr = new XMLHttpRequest();
             xhr.open('GET', `https://yubo.run/user/title.json`, true);
@@ -578,10 +564,17 @@ const app = createApp({
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
                     that.title_data = JSON.parse(xhr.responseText);
-                    that.error_message_set_title = `成功加载了
-                        ${that.title_data.adj.length}个前缀、
-                        ${that.title_data.title.length}个称号，
+                    that.title_data.adj_map = that.title_data.adj.reduce((acc, item) => {
+                            acc[item.id] = item.value;
+                            return acc;
+                        }, {});
+                    that.title_data.title_map = that.title_data.title.reduce((acc, item) => {
+                            acc[item.id] = item.value;
+                            return acc;
+                        }, {});
+                    that.error_message_set_title = `成功加载了${that.title_data.adj.length}个前缀、${that.title_data.title.length}个称号，
                         数据最后更新于 ${new Date(1000 * that.title_data.last_update_timestamp)}`;
+                    console.log(that.error_message_set_title);
                 }
                 else {
                     that.error_message_set_title = '加载失败，请稍后重试';
@@ -592,6 +585,13 @@ const app = createApp({
                 that.error_message_set_title = '加载失败，请稍后重试';
             }
             xhr.send();
+        },
+
+        set_title() {
+            this.is_setting_title = true;
+            if (this.title_data.length == 0) {
+                this.get_title_data();
+            }
         },
 
         init_main() {
@@ -730,6 +730,23 @@ const app = createApp({
             }
         },
 
+        update_meter() {
+            now = new Date();
+            if (this.login_status == 'waiting' || this.login_status == 'waiting_code_qq') {
+                // document.getElementById('meter_login').value = (now - this.latest_login_request) / 1000;
+                // document.getElementById('meter_check').value = (now - this.latest_check_request) / 1000;
+                this.meter_login_value = (now - this.latest_login_request) / 1000;
+                this.meter_check_value = (now - this.latest_check_request) / 1000;
+                let countdown_minute = Math.floor((this.latest_login_request - now + 300000) / 60000);
+                let countdown_second = Math.floor((this.latest_login_request - now + 300000) / 1000 % 60);
+                // document.getElementById('span_login_countdown').innerHTML = `${countdown_minute}:${countdown_second}`;
+                this.login_countdown_str = `${countdown_minute}:${countdown_second}`;
+                if (now - this.latest_login_request < 300000) {
+                    setTimeout(this.update_meter, 10);
+                }
+            }
+        },
+
         create_filter_adj(queryString) {
             return (adj_item) => {
                 return adj_item.value.indexOf(queryString) === 0;
@@ -758,13 +775,13 @@ const app = createApp({
             cb(results)
         },
 
-        handle_select_adj(item) {
+        select_adj(item) {
             this.input_adj_id = item.id;
             this.title_adj = item.value;
             this.handle_user_setting('set_adj');
         },
 
-        handle_select_title(item) {
+        select_title(item) {
             this.input_title_id = item.id;
             this.title_title = item.value;
             this.handle_user_setting('set_title');
@@ -788,7 +805,7 @@ const app = createApp({
             window.open(URL.createObjectURL(blob), '_blank');
         },
 
-        handle_switch_permission(module_name, permission_name) {
+        switch_permission(module_name, permission_name) {
             const that = this;
             this.is_loading = true;
             let payload = {
@@ -808,8 +825,8 @@ const app = createApp({
             }
             xhr.send(JSON.stringify(payload));
         },
-        
-        handle_switch_module(group_id, module_name) {
+
+        switch_module(group_id, module_name) {
             const that = this;
             this.is_loading = true;
             let payload = {
