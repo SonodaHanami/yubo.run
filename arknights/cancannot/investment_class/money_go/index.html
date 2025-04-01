@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>好得不能再好了！泰拉投资大师课 | 羽bot</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/bot/favicon_32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/bot/favicon_16.png">
+<script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue@3"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/element-plus"></script>
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/element-plus/dist/index.css"/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MZCWWQJQQT"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MZCWWQJQQT');
+</script>
+<style>
+.el-row {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.el-table .el-table__header .el-table__cell,
+.el-table .el-table__body-header .el-table__cell {
+    text-align: center;
+    div {
+        width: 100%;
+    }
+}
+
+.el-table .el-table__row .el-table__cell {
+    text-align: center;
+    .el-checkbox {
+        scale: 1;
+    }
+    .left {
+        text-align: left;
+        .el-checkbox {
+            scale: 1;
+        }
+    }
+}
+
+.checkbox_center_2x .el-checkbox__original {
+    scale: 2;
+    text-align: center;
+}
+
+#app {
+    margin: 10px 20px;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.cell-with-breaks {
+    white-space: pre-line; /* 或 pre-wrap */
+}
+
+.el-table tr td.el-table-fixed-column--left.eliminated {
+    background-color: var(--el-color-info-light-5);
+}
+.el-table tr td.selected-cell {
+    background-color: var(--el-color-warning-light-7);
+}
+.el-table tr td.correct-cell {
+    background-color: var(--el-color-success-light-7);
+}
+.el-table tr td.incorrect-cell {
+    background-color: var(--el-color-danger-light-7);
+}
+
+.div_top_right{
+    position: fixed;
+    top: -10px;
+    right: 10px;
+    z-index: 6;
+    text-align: right;
+}
+#div_link {
+    font-size: 2em;
+    font-weight: bold;
+    color: #2226;
+}
+#div_online_players {
+    position: fixed;
+    top: 3.2em;
+    right: 1em;
+}
+
+.full-page-div {
+    position: fixed; /* 或者 absolute */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: auto; /* 根据需要设置 */
+    user-select: none;
+}
+.full-height-bg {
+    width: 100%; /* 宽度根据需要设置 */
+    height: 100vh; /* 视口高度，或根据父容器设置 */
+
+    background-image: url('cancannot.jpg');
+    background-position: center; /* 水平居中 */
+    background-size: cover; /* 覆盖整个容器，保持宽高比 */
+    background-repeat: no-repeat; /* 不重复 */
+    
+    /* 简写形式 */
+    /* background: url('your-image.jpg') center/cover no-repeat; */
+}
+
+#floating-element {
+    width: 231px;
+    height: 371px;
+    position: absolute;
+    background-image: url('gold_medal_lecturer.png');
+    background-size: cover; /* 覆盖整个容器，保持宽高比 */
+    background-repeat: no-repeat; /* 不重复 */
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); */
+}
+
+.gold-text {
+    position: fixed;
+    left: 160px;
+    bottom: 40px;
+    font-size: 8rem;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+    color: transparent;
+    background: linear-gradient(
+        to bottom,
+        #f9d423 0%,
+        #e2a60a 25%,
+        #f9d423 50%,
+        #e2a60a 75%,
+        #f9d423 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: 
+        1px 1px 1px rgba(255,255,255,0.3),
+        -1px -1px 1px rgba(0,0,0,0.5);
+    display: inline-block;
+    padding: 0.5rem 1rem;
+}
+.gold-text::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.traditional-vertical {
+    position: fixed;
+    top: 160px;
+    left: 16%;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.vertical-content {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    height: 400px;
+    margin: 20px auto;
+    font-size: 1.2em;
+    letter-spacing: 10px;
+    line-height: 1.8;
+}
+.kanlaoshi {
+    font-size: 3em;
+    font-weight: bold;
+    font-family: "SimSun", "宋体", serif;
+    color: #FFF;
+    padding: 4px;
+    background: linear-gradient(to bottom, #35A27E 0%, transparent 100%);
+}
+.cannot_title {
+    color: #FFF;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 2px;
+    letter-spacing: 6px;
+    background: linear-gradient(to bottom, #2b2b2b 0%, transparent 100%);
+}
+
+
+.div_enter {
+    z-index: 325;
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    width: 640px;
+    height: 270px;
+    background-image: url('start_bg.png');
+    background-size: cover; /* 覆盖整个容器，保持宽高比 */
+    background-repeat: no-repeat; /* 不重复 */
+    border-color: #ddd;
+    border-style: solid;
+    border-width: 4px;
+}
+
+.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+    padding: 16px;
+    background-color: #000;
+}
+.close:hover {
+    opacity: 1;
+}
+.close:before, .close:after {
+    position: absolute;
+    left: 32px;
+    content: ' ';
+    height: 32px;
+    width: 4px;
+    background-color: #999;
+}
+.close:before {
+    transform: rotate(45deg);
+}
+.close:after {
+    transform: rotate(-45deg);
+}
+
+/* .green_triangle {
+    width: 0;
+    height: 0;
+    border-left: 120px solid transparent;
+    border-right: 120px solid transparent;
+    border-bottom: 208px solid transparent;
+    border-bottom-color: #19a085;
+    position: absolute;
+    left: 174px;
+    top: 50px;
+
+    .inner {
+        width: auto;
+    }
+} */
+
+.money_go {
+    font-size: 3.6em;
+    font-weight: bold;
+    color: #FFF;
+    position: absolute;
+    left: 0;
+    top: 100px;
+    padding-left: 200px;
+    background: linear-gradient(to right, #2b2b2bee 0%, transparent 100%);
+}
+.you_can_also {
+    font-size: 1.5em;
+    color: rgb(240, 0, 0);
+    background-color: #000;
+    position: absolute;
+    left: 100px;
+    top: 180px;
+    padding: 4px;
+}
+.invest_more_earn_more {
+    font-size: 1.5em;
+    color: #FFF;
+    position: absolute;
+    left: 240px;
+    top: 220px;
+    padding: 4px;
+}
+
+.arrow {
+    position: absolute;
+    display: inline-block;
+    height: 160px;
+    background: #c69940;
+    width: 40px;
+    rotate: 90deg;
+    margin-left: -180px;
+}
+.arrow:before {
+    content: "";
+    border-top: 64px solid #c69940;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 100px solid transparent;
+    transform: rotateZ(180deg) translateY(100%) translateX(31%);
+    position: relative;
+    display: inline-block;
+}
+.arrow_text {
+    font-size: 1.6em;
+    color: #EDB223;
+    width: 160px;
+    position: absolute;
+    left: -60px;
+    top: 30px;
+    rotate: -90deg;
+    animation: colorChange 2s infinite;
+}
+
+.slider-block {
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+}
+
+@keyframes colorChange {
+  0% { color: #ff0000; } /* 红 */
+  20% { color: #ff9900; } /* 橙 */
+  40% { color: #ffff00; } /* 黄 */
+  60% { color: #00ff00; } /* 绿 */
+  80% { color: #0066ff; } /* 蓝 */
+  100% { color: #cc00ff; } /* 紫 */
+}
+</style>
+</head>
+<body>
+<div id="app">
+    <el-row id="p_kale">加载中，请稍候；如果你一直只能看到这行字，那么很可能是卡了，请刷新重试，或者换个网络换个浏览器后重试</el-row>
+    <template v-if="!is_in_lobby && !is_in_room">
+        <div class="full-page-div full-height-bg" id="div_0">
+            <div class="traditional-vertical">
+                <p class="vertical-content">
+                    <span class="kanlaoshi">坎老师</span>
+                    <br>
+                    <span class="cannot_title">🥇黑色操盘梦魇</span>
+                    <br>
+                    <span class="cannot_title">🥇财富自由总统</span>
+                    <br>
+                    <span class="cannot_title">🥇至圣投资先贤</span>
+                    <br>
+                    <span class="cannot_title">🥇盘开得胜天师</span>
+                </p>
+            </div>
+            <div id="floating-element"></div>
+            <div class="gold-text" id="gold-text">全都不会亏！</div>
+            <div class="div_enter" @click="enter">
+                <div class="close"></div>
+                <div class="arrow">
+                    <div class="arrow_text">进入课程！</div>
+                </div>
+                <div class="green_triangle">
+                    <svg id="green_triangle_inner" width="240" height="208" viewBox="0 0 240 208"
+                        style="position: absolute; left: 174px; top: 50px;">
+                        <defs>
+                            <linearGradient id="gradient-transparent-inner" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#19a085" stop-opacity="1"/>   <!-- 顶部不透明 -->
+                                <stop offset="100%" stop-color="#19a085" stop-opacity="0"/> <!-- 底部完全透明 -->
+                            </linearGradient>
+                        </defs>
+                        <path d="M120 0 L240 208 L0 208 Z" fill="url(#gradient-transparent-inner)"></path>
+                    </svg>
+                    <svg id="green_triangle_outter" width="480" height="480" viewBox="-20 10 300 300"
+                        style="position: absolute; left: 70px; top: 0px;">
+                        <defs>
+                            <linearGradient id="gradient-transparent" x1="0%" y1="0%" x2="0%" y2="70%">
+                                <stop offset="0%" stop-color="#19a08566" stop-opacity="1"/>   <!-- 顶部不透明 -->
+                                <stop offset="100%" stop-color="#19a08566" stop-opacity="0"/> <!-- 底部完全透明 -->
+                            </linearGradient>
+                        </defs>
+                        <path d="M120 0 L240 208 L0 208 Z" fill="none" stroke="url(#gradient-transparent)" stroke-width="20">
+                        </path>
+                    </svg>
+                </div>
+                <div class="money_go" id="money_go">赚笔大的！</div>
+                <div class="you_can_also">你上你也坎，不坎不要钱！</div>
+                <div class="invest_more_earn_more">小投怡小情，大投怡大情！</div>
+                
+            </div>
+        </div>
+    </template>
+
+    <template v-if="!1">
+        <el-row>
+            <el-space>
+                <el-link type="primary" href="https://yubo.run/bot/docs/" target="_blank">羽bot文档</el-link>
+                <el-link type="primary" href="https://yubo.run/arknights/ji/" target="_blank">集集统计总榜（暂定）</el-link>
+                <el-link type="primary" href="https://yubo.run/arknights/ji/user.html" target="_blank">个人集集统计</el-link>
+                <el-link type="primary" href="https://yubo.run/arknights/ji/server.html" target="_blank">全服集集统计</el-link>
+            </el-space>
+        </el-row>
+    </template>
+
+    <template v-if="is_in_lobby || is_in_room">
+        <div class="div_top_right">
+            <el-row>
+                <div id="div_link">
+                    <a href="https://yubo.run/ququ" style="color: #2222;">
+                        yubo.run/ququ
+                    </a>
+                </div>
+            </el-row>
+            <el-row>
+                <div id="div_online_players">
+                    <el-text>当前在线：{{ online_players }}</el-text>
+                </div>
+            </el-row>
+        </div>
+    </template>
+
+    <template v-if="is_in_lobby">
+        <div>
+            <h1 style="text-align: center">好得不能再好了！泰拉投资大师课</h1>
+            <el-tabs type="card" v-model="selecting_tab" v-if="login_status == 'ok'" @tab-click="handle_tab_click">
+                <el-tab-pane label="房间列表" name="room_list">
+                    <el-row>
+                        <el-space>
+                            <el-button type="primary" @click="handle_selecting_tab('create_room')">创建房间</el-button>
+                            <el-button type="default" @click="get_room_info_or_room_list" :disabled="is_getting_room_info">刷新列表</el-button>
+                        </el-space>
+                    </el-row>
+                    <el-table v-loading="is_loading" :data="room_list" :default-sort="{ prop: 'room_code', order: 'ascending' }"
+                        table-layout="auto" style="width: 100%" max-height="calc(100vh - 150px)" :row-style="{height: 0}" stripe border>
+                        <el-table-column prop="room_code" label="房间号"></el-table-column>
+                        <el-table-column label="房主" min-width="480px">
+                            <template v-slot="scope">
+                                <el-space>
+                                <el-tooltip
+                                    v-if="scope.row.owner_is_vip"
+                                    class="box-item"
+                                    effect="dark"
+                                    content="尊贵的VIP"
+                                    placement="left"
+                                >
+                                    <el-text>🚁</el-text>
+                                </el-tooltip>
+                                    <el-text v-if="title_data.adj_map && title_data.title_map">
+                                        【{{ title_data.adj_map[scope.row.owner_adj_id] }}{{ title_data.title_map[scope.row.owner_title_id] }}】
+                                    </el-text>
+                                    <el-link type="primary" v-if="scope.row.owner_nickname == 'bilibili_nickname'"
+                                        :href="'https://space.bilibili.com/' + scope.row.owner_bilibili_uid" target="_blank">
+                                        {{ scope.row.owner_bilibili_nickname }}
+                                    </el-link>
+                                    <el-text v-if="scope.row.owner_nickname == 'arknights_nickname'">
+                                        {{ scope.row.owner_arknights_nickname }}
+                                    </el-text>
+                                    <!-- <el-text v-if="scope.row.owner_is_vip">🚁</el-text> -->
+                                </el-space>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="人数">
+                            <template v-slot="scope">
+                                <el-space>
+                                    <el-text>{{ scope.row.current_players }}</el-text>
+                                    <el-text>/</el-text>
+                                    <el-text>{{ scope.row.max_players }}</el-text>
+                                </el-space>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="状态">
+                            <template v-slot="scope">
+                                <el-space>
+                                    <el-text v-if="scope.row.status == 'waiting'">等待开始</el-text>
+                                    <el-text type="info" v-if="scope.row.status == 'playing'">游戏中</el-text>
+                                </el-space>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="加入房间">
+                            <template v-slot="scope">
+                                <el-space>
+                                    <el-button type="primary" @click="join_room(scope.row.room_code);"
+                                        :disabled="scope.row.current_players >= scope.row.max_players || scope.row.status == 'playing'">
+                                        加入房间
+                                    </el-button>
+                                </el-space>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="创建房间" name="create_room">
+                    <el-form :model="form_create_room" label-width="auto" style="max-width: 600px">
+                        <el-form-item label="最大人数">
+                            <el-slider v-model="form_create_room.max_players" :min="1" :max="is_vip ? 30 : 10" show-input></el-slider>
+                            <el-text v-if="is_vip">🚁尊贵的VIP专享超大房间人数上限</el-text>
+                        </el-form-item>
+                        <el-form-item label="允许下注99%">
+                            <el-radio-group v-model="form_create_room.allow_99">
+                                <el-radio-button value="1">从第1轮开始</el-radio-button>
+                                <el-radio-button value="6">从第6轮开始</el-radio-button>
+                                <el-radio-button value="11">全程不允许</el-radio-button>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="允许下注ALL">
+                            <el-radio-group v-model="form_create_room.allow_all">
+                                <el-radio-button value="1">从第1轮开始</el-radio-button>
+                                <el-radio-button value="6">从第6轮开始</el-radio-button>
+                                <el-radio-button value="11">全程不允许</el-radio-button>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="直播间（选填）">
+                            <el-input
+                                v-model="form_create_room.bilibili_live_room_id"
+                                style="max-width: 600px"
+                                placeholder="直播间号"
+                                >
+                                <template #prepend>https://live.bilibili.com/</template>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="create_room" :disabled="is_create_room_disabled">创建房间</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+                <el-tab-pane label="用户设置" name="user_setting">
+                    <template v-if="login_status == 'ok'">
+                        <el-row>
+                            <el-space>
+                                <el-text>欢迎</el-text>
+                                <el-text>
+                                    【{{ title_adj }}{{ title_title }}】
+                                </el-text>
+                                <el-text v-if="login_user_id && nickname != 'null'">
+                                    {{ nickname_dict[nickname] }}
+                                </el-text>
+                            </el-space>
+                        </el-row>
+                        <el-row>
+                            <el-space>
+                                <el-text>关联账号相关设置请到</el-text>
+                                <el-link type="primary" href="https://yubo.run/user/" target="_blank">个人中心</el-link>
+                                <el-text >修改</el-text>
+                            </el-space>
+                        </el-row>
+                        <el-divider></el-divider>
+                        <el-row>
+                            <el-space>
+                                <el-text>显示的昵称：</el-text>
+                                <el-select v-model="nickname" @change="handle_user_setting('set_nickname');console.log(nickname, nickname_dict[nickname])" placeholder="Select" style="width: 240px">
+                                    <el-option
+                                        v-for="item in nickname_option_list"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                        :disabled="item.disabled">
+                                    </el-option>
+                                </el-select>
+                            </el-space>
+                        </el-row>
+                        <el-row>
+                            <el-space>
+                                <el-text>当前称号：</el-text>
+                                <el-text>{{ title_adj }}{{ title_title }}</el-text>
+                                <el-button type="default" id="button_set_title" v-if="!is_setting_title" @click="set_title">修改</el-button>
+                            </el-space>
+                        </el-row>
+                        <el-row v-if="is_setting_title">
+                            <div>
+                                <el-row>
+                                    <el-text v-if="error_message_set_title">{{ error_message_set_title }}</el-text>
+                                </el-row>
+                                <el-row>
+                                    <el-space>
+                                        <el-button type="default" @click="handle_handlebar('adj')">查看所有可用的前缀</el-button>
+                                        <el-button type="default" @click="handle_handlebar('title')">查看所有可用的称号</el-button>
+                                    </el-space>
+                                </el-row>
+                                <el-row>
+                                    <el-space>
+                                        <el-text>修改称号</el-text>
+                                        <el-autocomplete
+                                            v-model="input_adj"
+                                            :fetch-suggestions="query_search_adj"
+                                            clearable
+                                            placeholder="前缀"
+                                            @select="select_adj"
+                                        ></el-autocomplete>
+                                        <el-autocomplete
+                                            v-model="input_title"
+                                            :fetch-suggestions="query_search_title"
+                                            clearable
+                                            placeholder="称号"
+                                            @select="select_title"
+                                        ></el-autocomplete>
+                                    </el-space>
+                                </el-row>
+                            </div>
+                        </el-row>
+                        <el-row>
+                            <el-space>
+                                <el-text>称号征集：</el-text>
+                                <el-input type="text" id="input_title_idea" placeholder="前缀或称号" v-model="input_title_idea" style="width: 240px;"></el-input>
+                                <el-button type="default" @click="handle_user_setting('submit_idea_adj')">作为前缀投稿</el-button>
+                                <el-button type="default" @click="handle_user_setting('submit_idea_title')">作为称号投稿</el-button>
+                            </el-space>
+                        </el-row>
+                        <el-row>
+                            <el-text v-if="error_message_submit_idea">{{ error_message_submit_idea }}</el-text>
+                        </el-row>
+                    </template>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+    </template>
+
+    <template v-if="is_in_room">
+        <div>
+            <el-page-header @back="leave_room" content="返回大厅"></el-page-header>
+            <h1 style="text-align: center">
+                房间 {{ current_room.room_code }} {{ current_room_title_comment }} {{ current_room_status }}
+            </h1>
+            <el-alert type="error">提示：房主在游戏内不要ALL噢</el-alert>
+            <el-alert type="warning">提示：结束选择时未选择的玩家将被标记为已出局👻</el-alert>
+            <el-row v-if="current_room_bilibili_live_room_id">
+                <el-text>房主正在直播：</el-text>
+                <el-link type="primary" :href="'https://live.bilibili.com/'+current_room_bilibili_live_room_id" target="_blank">
+                    https://live.bilibili.com/{{ current_room_bilibili_live_room_id }}
+                </el-link>
+            </el-row>
+            <el-divider></el-divider>
+            <el-row v-if="current_room.owner_id == user_id">
+                <el-space>
+                    <el-text>房主选项</el-text>
+                    <el-button v-if="current_room.status == 'waiting'" :disabled="!is_all_players_ready"
+                        :type="is_all_players_ready ? 'success' : 'info'"
+                        @click="start_game">
+                        开始游戏
+                    </el-button>
+                    <el-button v-if="current_room.status == 'playing'" :disabled="!(current_room_round.status == 'selecting')"
+                        type="warning" @click="end_selecting">
+                        结束选择
+                    </el-button>
+                    <el-button v-if="current_room.status == 'playing'" :disabled="!(current_room_round.status == 'judging')"
+                        type="primary" @click="judge('left')">
+                        左边赢了
+                    </el-button>
+                    <el-button v-if="current_room.status == 'playing'" :disabled="!(current_room_round.status == 'judging')"
+                        type="success" @click="judge('right')">
+                        右边赢了
+                    </el-button>
+                    <el-button v-if="current_room.status == 'playing'" :disabled="!(current_room_round.status == 'judging')"
+                        :type="button_types.judge_draw || 'default'"
+                        @mouseover="button_types.judge_draw = 'warning'"
+                        @mouseleave="button_types.judge_draw = 'default'"
+                        @click="judge('draw')">
+                        啊？平局？
+                    </el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-popconfirm
+                        placement="top-end"
+                        title="确定吗？"
+                        confirm-button-text="确定"
+                        cancel-button-text="取消"
+                        confirm-button-type="danger"
+                        @confirm="disband_room"
+                        >
+                        <template #reference>
+                            <el-button
+                                :type="button_types.disband_room || 'default'"
+                                @mouseover="button_types.disband_room = 'danger'"
+                                @mouseleave="button_types.disband_room = 'default'">
+                                解散房间
+                            </el-button>
+                        </template>
+                    </el-popconfirm>
+                </el-space>
+            </el-row>
+            <el-row>
+                <el-space>
+                    <el-text>玩家选项</el-text>
+                    <el-button v-if="current_room.status == 'waiting' && current_room.owner_id != user_id"
+                        :type="is_ready ? 'warning' : 'primary'"
+                        @click="toggle_ready">
+                        {{ is_ready ? '取消准备' : '准备'}}
+                    </el-button>
+                    <el-space v-if="current_room.owner_id == user_id || !(current_room.status == 'waiting')">
+                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('left', 10)">左10%</el-button>
+                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('left', 30)">左30%</el-button>
+                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('left', 60)">左60%</el-button>
+                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_99_disabled)" @click="select('left', 99)">左99%</el-button>
+                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_all_disabled)" @click="select('left', 100)">左ALL</el-button>
+                        <el-divider direction="vertical"></el-divider>
+                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('right', 10)">右10%</el-button>
+                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('right', 30)">右30%</el-button>
+                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('right', 60)">右60%</el-button>
+                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_99_disabled)" @click="select('right', 99)">右99%</el-button>
+                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_all_disabled)" @click="select('right', 100)">右ALL</el-button>
+                    </el-space>
+                </el-space>
+            </el-row>
+            <el-table v-loading="is_loading"
+                :data="current_room_player_list"
+                :default-sort="{ prop: 'total_score', order: 'descending' }"
+                :cell-class-name="handle_cell_class"
+                table-layout="auto" style="width: 100%" max-height="calc(100vh - 150px)" :row-style="{height: 0}" border>
+                <el-table-column label="#" type="index" min-width="40px" fixed>
+                </el-table-column>
+                <el-table-column label="玩家" min-width="325px" fixed>
+                    <template v-slot="scope">
+                        <el-space>
+                            <el-tooltip
+                                v-if="scope.row.is_vip"
+                                class="box-item"
+                                effect="dark"
+                                content="尊贵的VIP"
+                                placement="left"
+                            >
+                                <el-text>🚁</el-text>
+                            </el-tooltip>
+                            <el-text v-if="title_data.adj_map && title_data.title_map">
+                                【{{ title_data.adj_map[scope.row.adj_id] }}{{ title_data.title_map[scope.row.title_id] }}】
+                            </el-text>
+                            <el-link type="primary"  v-if="scope.row.nickname == 'bilibili_nickname'"
+                                :href="'https://space.bilibili.com/' + scope.row.bilibili_uid" target="_blank">
+                                {{ scope.row.bilibili_nickname }}
+                            </el-link>
+                            <el-text v-if="scope.row.nickname == 'arknights_nickname'">
+                                {{ scope.row.arknights_nickname }}
+                            </el-text>
+                        </el-space>
+                    </template>
+                </el-table-column>
+                <el-table-column label="状态" min-width="75px" fixed>
+                    <template v-slot="scope">
+                        <el-space>
+                            <el-tooltip
+                                v-if="scope.row.user_id == current_room.owner_id"
+                                class="box-item"
+                                effect="dark"
+                                content="房主"
+                                placement="right"
+                            >
+                                <el-text>😎</el-text>
+                            </el-tooltip>
+                            <el-tooltip
+                                v-if="scope.row.user_id != current_room.owner_id && !scope.row.is_eliminated && (scope.row.is_ready || scope.row.is_selected)"
+                                class="box-item"
+                                effect="light"
+                                placement="right"
+                            >
+                                <template #content>{{ current_room.status == 'waiting' ? '已准备' : '已选择' }}</template>
+                                <el-text>✅</el-text>
+                            </el-tooltip>
+                            <el-tooltip
+                                v-if="scope.row.user_id != current_room.owner_id && !scope.row.is_eliminated && !(scope.row.is_ready || scope.row.is_selected)"
+                                class="box-item"
+                                effect="light"
+                                placement="right"
+                            >
+                                <template #content>{{ current_room.status == 'waiting' ? '未准备' : '未选择' }}</template>
+                                <el-text>⏳</el-text>
+                            </el-tooltip>
+                            <el-tooltip
+                                v-if="scope.row.is_eliminated"
+                                class="box-item"
+                                effect="light"
+                                placement="right"
+                            >
+                                <template #content>已出局</template>
+                                <el-text>👻</el-text>
+                            </el-tooltip>
+                        </el-space>
+                    </template>
+                </el-table-column>
+                <el-table-column v-if="current_room.owner_id == user_id" label="房主操作" min-width="100px" fixed>
+                    <template v-slot="scope">
+                        <el-space>
+                            <el-text v-if="scope.row.user_id == user_id">正是房主</el-text>
+                            <el-popconfirm
+                                v-if="scope.row.user_id != user_id"
+                                placement="top-end"
+                                title="确定吗？"
+                                confirm-button-text="确定"
+                                cancel-button-text="取消"
+                                confirm-button-type="danger"
+                                @confirm="kick_player(scope.row.user_id)"
+                                >
+                                <template #reference>
+                                    <el-button
+                                        :type="scope.row.buttonType || 'default'"
+                                        @mouseover="scope.row.buttonType = 'danger'"
+                                        @mouseleave="scope.row.buttonType = 'default'">
+                                        踢出
+                                    </el-button>
+                                </template>
+                            </el-popconfirm>
+                        </el-space>
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column prop="total_score" label="源石锭" width="180px" fixed>
+                </el-table-column> -->
+                <el-table-column prop="total_score" label="源石锭" min-width="180px" fixed>
+                    <template v-slot="scope">
+                        <el-tooltip
+                            class="box-item"
+                            effect="light"
+                            placement="top"
+                        >
+                            <template #content>
+                                {{ toLargestChineseUnit(scope.row.total_score) }}
+                            </template>
+                            <el-text>{{ scope.row.total_score.toLocaleString() }}</el-text>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+                <el-table-column v-for="n in 10">
+                    <template #header><span>第{{ n }}轮<br>左边赢</span></template>
+                    <template v-slot="scope">
+                        <el-tooltip
+                            v-if="scope.row.choices[n]"
+                            class="box-item"
+                            effect="light"
+                            placement="top"
+                        >
+                            <template #content>
+                                第{{ n }}轮<br>
+                                选择 {{ selections[scope.row.choices[n]['side']] }} {{ selections[scope.row.choices[n]['scale']] }}<br>
+                                {{ scope.row.choices[n].is_correct ? '+' : '' }}{{ scope.row.choices[n].score_earned ? scope.row.choices[n].score_earned.toLocaleString() : ''}}
+                            </template>
+                            <el-text>{{ selections[scope.row.choices[n]['side']] }} {{ selections[scope.row.choices[n]['scale']] }}</el-text>
+                            <!-- <el-text>{{ selections[scope.row.choices[`side_${n}`]] }} {{ selections[scope.row.choices[`scale_${n}`]] }}</el-text> -->
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-dialog
+                v-model="is_leave_room_dialog_visible"
+                title="返回大厅"
+                width="500"
+                align-center
+            >
+                <span>房主离开房间会直接关闭房间</span>
+                <template #footer>
+                    <div class="dialog-footer">
+                        <el-button @click="is_leave_room_dialog_visible=!1">取消</el-button>
+                        <el-button type="danger" @click="leave_room(true);">确认</el-button>
+                    </div>
+                </template>
+            </el-dialog>
+        </div>
+    </template>
+
+</div>
+
+<script src="ququ.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('div_0');
+    const element = document.getElementById('floating-element');
+
+    const left_edge = -34;
+    const bottom_edge = -6;
+    
+    // 初始位置
+    let posX = Math.random() * (container.offsetWidth - element.offsetWidth);
+    let posY = Math.random() * (container.offsetHeight - element.offsetHeight);
+    // 初始速度 (随机方向)
+    let speedX = (Math.random() - 0.5) * 4;
+    let speedY = (Math.random() - 0.5) * 4;
+    // 确保初始速度不为0
+    if (Math.abs(speedX) < 1) speedX = speedX < 0 ? -1 : 1;
+    if (Math.abs(speedY) < 1) speedY = speedY < 0 ? -1 : 1;
+    // 动画函数
+    function animate() {
+        // 更新位置
+        posX += speedX;
+        posY += speedY;
+        
+        // 检测左右边界碰撞
+        if (posX <= left_edge || posX >= container.offsetWidth - element.offsetWidth) {
+            speedX = -speedX; // 反转X方向速度
+            posX = posX <= left_edge ? left_edge : container.offsetWidth - element.offsetWidth; // 防止元素超出边界
+        }
+        
+        // 检测上下边界碰撞
+        if (posY <= 0 || posY >= container.offsetHeight - element.offsetHeight) {
+            speedY = -speedY; // 反转Y方向速度
+            posY = posY <= 0 ? 0 : container.offsetHeight - element.offsetHeight; // 防止元素超出边界
+        }
+        
+        // 应用新位置
+        element.style.left = posX + 'px';
+        element.style.top = posY + 'px';
+        
+        // 继续动画
+        requestAnimationFrame(animate);
+    }
+
+    // 点击重新随机速度
+    element.addEventListener('click', function() {
+        speedX = (Math.random() - 0.5) * 10;
+        speedY = (Math.random() - 0.5) * 10;
+        // 修改文字
+        if (Math.random() < 0.1) {
+            document.getElementById('gold-text').innerHTML = '全都不会赚！';
+            document.getElementById('money_go').innerHTML = '亏笔大的！';
+        }
+        else {
+            document.getElementById('gold-text').innerHTML = '全都不会亏！';
+            document.getElementById('money_go').innerHTML = '赚笔大的！';
+        }
+    });
+
+    // 启动动画
+    animate();
+    
+    // 窗口大小改变时重新计算边界
+    window.addEventListener('resize', function() {
+        // 确保元素不会卡在边界外
+        if (posX > container.offsetWidth - element.offsetWidth) {
+            posX = container.offsetWidth - element.offsetWidth;
+        }
+        if (posY > container.offsetHeight - element.offsetHeight) {
+            posY = container.offsetHeight - element.offsetHeight;
+        }
+    });
+});
+
+</script>
+
+</body>
+</html>
