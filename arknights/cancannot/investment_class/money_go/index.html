@@ -442,14 +442,9 @@ table {
             <h1 style="text-align: center">好得不能再好了！泰拉投资大师课</h1>
             <el-tabs type="card" v-model="selecting_tab" v-if="login_status == 'ok'" @tab-click="handle_tab_click">
                 <el-tab-pane label="房间列表" name="room_list">
-                    <el-row>
-                        <el-space>
-                            <el-button type="primary" @click="handle_selecting_tab('create_room')">创建房间</el-button>
-                            <el-button type="default" @click="get_room_info_or_room_list" :disabled="is_getting_room_info">刷新列表</el-button>
-                        </el-space>
-                    </el-row>
                     <el-table v-loading="is_loading" :data="room_list" :default-sort="{ prop: 'room_code', order: 'ascending' }"
-                        table-layout="auto" style="width: 100%" max-height="calc(100vh - 150px)" :row-style="{height: 0}" stripe border>
+                        table-layout="auto" style="width: 100%" max-height="calc(100vh - 150px)" :row-style="{height: 0}" stripe border
+                        empty-text="空空如也">
                         <el-table-column prop="room_code" label="房间号" min-width="120px"></el-table-column>
                         <el-table-column label="房主" min-width="480px">
                             <template v-slot="scope">

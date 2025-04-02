@@ -150,7 +150,7 @@ const app = createApp({
     el: '#app',
     data: () => ({
         latest_login_request: new Date(),
-        latest_check_request: new Date(),
+        update_room_list_interval_id: null,
         selections: {
             'null': '无',
             'left': '左',
@@ -309,6 +309,18 @@ const app = createApp({
             that.handle_command('get_room_info_or_room_list');
         },
 
+        update_room_list() {
+            const that = this;
+            // 检查是否在大厅
+            if (!that.is_in_lobby) return;
+            that.get_room_info_or_room_list();
+            // 再次检查
+            if (that.is_in_lobby) {
+                setTimeout(that.update_room_list, 5000);
+            }
+        },
+
+
         create_room() {
             const that = this;
             if (that.is_create_room_disabled) {
@@ -359,7 +371,7 @@ const app = createApp({
                 this.is_create_room_disabled = false;
                 this.is_getting_room_info = false;
                 this.handle_command('leave_room');
-                this.handle_room_update();
+                this.update_room_list();
             }
         },
 
@@ -499,6 +511,7 @@ const app = createApp({
 
         handle_room_update() {
             const that = this;
+            if (that.is_in_lobby && !that.is_in_room) return;
             that.current_room_bilibili_live_room_id = that.current_room.settings.bilibili_live_room_id;
             that.current_room_round_list = that.current_room.round_list;
             if (that.current_room_round_list.length) {
@@ -559,7 +572,6 @@ const app = createApp({
                 'login_token': that.login_token,
             }
             axios.post('https://yubo.run/api/kusa/login_info', payload).then(res => {
-                that.latest_check_request = new Date();
                 if (res.data.error) {
                     this.error_message_login = res.data.error;
                     window.location.href = `https://yubo.run/user/`;
@@ -583,7 +595,7 @@ const app = createApp({
                     that.init_websocket();
                     that.handle_command(JSON.stringify(payload));
                     that.get_title_data();
-                    that.get_room_info_or_room_list();
+                    that.update_room_list();
                 }
             }).catch(function (error) {
                 that.$alert(error, '获取数据失败，请联系维护人员');
