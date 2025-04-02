@@ -164,6 +164,22 @@ table {
     pointer-events: none;
 }
 
+.subtitle {
+    text-align: center;
+    position: fixed;
+    left: 30%;
+    bottom: 20px;
+    color: #FFF;
+    font-weight: bold;
+    -webkit-text-stroke: 1.2px #000;
+    .large {
+        font-size: 3em;
+    }
+    .small {
+        font-size: 2.4em;
+    }
+}
+
 .traditional-vertical {
     position: fixed;
     top: 160px;
@@ -204,10 +220,10 @@ table {
     z-index: 325;
     position: fixed;
     right: 10px;
-    bottom: 10px;
+    bottom: 325px;
     width: 640px;
     height: 270px;
-    background-image: url('start_bg.png');
+    background-image: url('start_bg.jpg');
     background-size: cover; /* 覆盖整个容器，保持宽高比 */
     background-repeat: no-repeat; /* 不重复 */
     border-color: #ddd;
@@ -352,7 +368,11 @@ table {
                 </p>
             </div>
             <div id="floating-element"></div>
-            <div class="gold-text" id="gold-text">全都不会亏！</div>
+            <div class="gold-text" id="gold-text" style="display: none;">全都不会亏！</div>
+            <div class="subtitle">
+                <div class="large">你这个人 满脑子都只想着源石锭呢</div>
+                <div class="small">あなた　源石錐のことばかりですのね</div>
+            </div>
             <div class="div_enter" @click="enter">
                 <div class="close"></div>
                 <div class="arrow">
@@ -430,7 +450,7 @@ table {
                     </el-row>
                     <el-table v-loading="is_loading" :data="room_list" :default-sort="{ prop: 'room_code', order: 'ascending' }"
                         table-layout="auto" style="width: 100%" max-height="calc(100vh - 150px)" :row-style="{height: 0}" stripe border>
-                        <el-table-column prop="room_code" label="房间号"></el-table-column>
+                        <el-table-column prop="room_code" label="房间号" min-width="120px"></el-table-column>
                         <el-table-column label="房主" min-width="480px">
                             <template v-slot="scope">
                                 <el-space>
@@ -457,7 +477,7 @@ table {
                                 </el-space>
                             </template>
                         </el-table-column>
-                        <el-table-column label="人数">
+                        <el-table-column label="人数" min-width="120px">
                             <template v-slot="scope">
                                 <el-space>
                                     <el-text>{{ scope.row.current_players }}</el-text>
@@ -466,7 +486,7 @@ table {
                                 </el-space>
                             </template>
                         </el-table-column>
-                        <el-table-column label="状态">
+                        <el-table-column label="状态" min-width="120px">
                             <template v-slot="scope">
                                 <el-space>
                                     <el-text v-if="scope.row.status == 'waiting'">等待开始</el-text>
@@ -474,7 +494,7 @@ table {
                                 </el-space>
                             </template>
                         </el-table-column>
-                        <el-table-column label="加入房间">
+                        <el-table-column label="加入房间" min-width="120px">
                             <template v-slot="scope">
                                 <el-space>
                                     <el-button type="primary" @click="join_room(scope.row.room_code);"
@@ -811,7 +831,8 @@ table {
                 </el-table-column>
                 <!-- <el-table-column prop="total_score" label="源石锭" width="180px" fixed>
                 </el-table-column> -->
-                <el-table-column prop="total_score" label="源石锭" min-width="180px" fixed>
+                <el-table-column prop="total_score" label="源石锭" min-width="180px" fixed
+                    sortable :sort-orders="['descending', 'ascending']">
                     <template v-slot="scope">
                         <el-tooltip
                             class="box-item"
@@ -826,7 +847,14 @@ table {
                     </template>
                 </el-table-column>
                 <el-table-column v-for="n in 10">
-                    <template #header><span>第{{ n }}轮<br>左边赢</span></template>
+                    <template #header>
+                        <span>
+                            第{{ n }}轮<br>
+                            {{ current_room_round_list[n - 1] && current_room_round_list[n - 1].winner == 'left' ? '左边赢' : ''}}
+                            {{ current_room_round_list[n - 1] && current_room_round_list[n - 1].winner == 'right' ? '右边赢' : ''}}
+                            {{ current_room_round_list[n - 1] && current_room_round_list[n - 1].winner == 'draw' ? '平局' : ''}}
+                        </span>
+                    </template>
                     <template v-slot="scope">
                         <el-tooltip
                             v-if="scope.row.choices[n]"

@@ -171,6 +171,9 @@ const app = createApp({
     mounted() {
         document.getElementById('p_kale').style.display = 'none';
         this.load_login_data();
+        console.log('this.login_token', this.login_token);
+        console.log('this.login_identifier', this.login_identifier);
+
         if (this.login_token && this.login_identifier) {
             this.login_status = 'waiting';
             this.get_login_info();
@@ -247,6 +250,9 @@ const app = createApp({
                 }
                 this.login_identifier = window.localStorage['login_identifier'];
                 this.login_token = window.localStorage['login_token'];
+                if (this.login_identifier == '' && this.login_token == '') {
+                    console.log('已保存的登录信息为空');
+                }
                 return true;
             }
         },

@@ -6,7 +6,7 @@ const STATUS = {
     waiting: '等待开始',
     selecting: '选择阶段',
     judging: '判定阶段',
-    completed: '已结束',
+    finished: '已结束',
 };
 
 const templateSource = `
@@ -280,6 +280,9 @@ const app = createApp({
                 }
                 this.login_identifier = window.localStorage['login_identifier'];
                 this.login_token = window.localStorage['login_token'];
+                if (this.login_identifier == '' && this.login_token == '') {
+                    console.log('已保存的登录信息为空');
+                }
                 return true;
             }
         },
