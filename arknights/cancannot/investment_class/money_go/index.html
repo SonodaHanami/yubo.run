@@ -706,22 +706,22 @@ table {
                 <el-space>
                     <el-text>玩家选项</el-text>
                     <el-button v-if="current_room.status == 'waiting' && current_room.owner_id != user_id"
-                        :type="is_ready ? 'warning' : 'primary'"
+                        :type="is_ready ? 'warning' : 'primary'" :disabled="is_button_disabled"
                         @click="toggle_ready">
                         {{ is_ready ? '取消准备' : '准备'}}
                     </el-button>
                     <el-space v-if="current_room.owner_id == user_id || !(current_room.status == 'waiting')">
-                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('left', 10)">左10%</el-button>
-                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('left', 30)">左30%</el-button>
-                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('left', 60)">左60%</el-button>
-                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_99_disabled)" @click="select('left', 99)">左99%</el-button>
-                        <el-button type="primary" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_all_disabled)" @click="select('left', 100)">左ALL</el-button>
+                        <el-button type="primary" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('left', 10)">左10%</el-button>
+                        <el-button type="primary" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('left', 30)">左30%</el-button>
+                        <el-button type="primary" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('left', 60)">左60%</el-button>
+                        <el-button type="primary" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_99_disabled)" @click="select('left', 99)">左99%</el-button>
+                        <el-button type="primary" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_all_disabled)" @click="select('left', 100)">左ALL</el-button>
                         <el-divider direction="vertical"></el-divider>
-                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('right', 10)">右10%</el-button>
-                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('right', 30)">右30%</el-button>
-                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('right', 60)">右60%</el-button>
-                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_99_disabled)" @click="select('right', 99)">右99%</el-button>
-                        <el-button type="success" :disabled="(is_eliminated || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_all_disabled)" @click="select('right', 100)">右ALL</el-button>
+                        <el-button type="success" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('right', 10)">右10%</el-button>
+                        <el-button type="success" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('right', 30)">右30%</el-button>
+                        <el-button type="success" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting')" @click="select('right', 60)">右60%</el-button>
+                        <el-button type="success" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_99_disabled)" @click="select('right', 99)">右99%</el-button>
+                        <el-button type="success" :disabled="(is_eliminated || is_button_disabled || current_room.status != 'playing' || current_room_round.status != 'selecting' || is_all_disabled)" @click="select('right', 100)">右ALL</el-button>
                     </el-space>
                 </el-space>
             </el-row>

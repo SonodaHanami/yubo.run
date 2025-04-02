@@ -213,6 +213,7 @@ const app = createApp({
         button_types: {},
         selecting_tab: '',
         is_loading: true,
+        is_button_disabled: false,
         is_getting_room_info: false,
         is_create_room_disabled: false,
         is_leave_room_dialog_visible: false,
@@ -379,6 +380,8 @@ const app = createApp({
         },
 
         toggle_ready() {
+            this.is_button_disabled = true;
+            setTimeout(this.release_button, 1000);
             this.handle_command('toggle_ready');
         },
 
@@ -392,6 +395,8 @@ const app = createApp({
         },
 
         select(side, scale) {
+            this.is_button_disabled = true;
+            setTimeout(this.release_button, 1000);
             this.handle_command(`select_${this.current_room_round_number}_${side}_${scale}`);
         },
 
@@ -755,6 +760,10 @@ const app = createApp({
 
         handle_tab_click(tab, event) {
             console.log(tab.paneName);
+        },
+
+        release_button() {
+            this.is_button_disabled = false;
         },
 
         select_adj(item) {
