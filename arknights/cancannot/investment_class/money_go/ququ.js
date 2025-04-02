@@ -150,7 +150,6 @@ const app = createApp({
     el: '#app',
     data: () => ({
         latest_login_request: new Date(),
-        update_room_list_interval_id: null,
         selections: {
             'null': '无',
             'left': '左',
@@ -414,8 +413,8 @@ const app = createApp({
             const that = this;
             console.log(data);
             if (data.hasOwnProperty('is_in_lobby')) {
+                if(!that.is_in_lobby) that.selecting_tab = 'room_list';
                 that.is_in_lobby = data.is_in_lobby;
-                this.selecting_tab = 'room_list'
             }
             if (data.hasOwnProperty('is_in_room')) {
                 that.is_in_room = data.is_in_room;
