@@ -504,8 +504,8 @@ table {
                 <el-tab-pane label="创建房间" name="create_room">
                     <el-form :model="form_create_room" label-width="auto" style="max-width: 600px">
                         <el-form-item label="最大人数">
-                            <el-slider v-model="form_create_room.max_players" :min="1" :max="is_vip ? 30 : 10" show-input></el-slider>
-                            <el-text v-if="is_vip">🚁尊贵的VIP专享超大房间人数上限</el-text>
+                            <el-slider v-model="form_create_room.max_players" :min="1" :max="is_vip ? 20 : 10" show-input></el-slider>
+                            <el-text v-if="is_vip">🚁尊贵的VIP专享更大房间人数上限</el-text>
                         </el-form-item>
                         <el-form-item label="允许下注99%">
                             <el-radio-group v-model="form_create_room.allow_99">
@@ -747,12 +747,15 @@ table {
                             <el-text v-if="title_data.adj_map && title_data.title_map">
                                 【{{ title_data.adj_map[scope.row.adj_id] }}{{ title_data.title_map[scope.row.title_id] }}】
                             </el-text>
-                            <el-link type="primary"  v-if="scope.row.nickname == 'bilibili_nickname'"
+                            <el-link type="primary" v-if="scope.row.nickname == 'bilibili_nickname'"
                                 :href="'https://space.bilibili.com/' + scope.row.bilibili_uid" target="_blank">
                                 {{ scope.row.bilibili_nickname }}
                             </el-link>
                             <el-text v-if="scope.row.nickname == 'arknights_nickname'">
                                 {{ scope.row.arknights_nickname }}
+                            </el-text>
+                            <el-text v-if="scope.row.nickname == 'arknights_nickname_clear'">
+                                {{ scope.row.arknights_nickname ? scope.row.arknights_nickname.split('#')[0] : '' }}
                             </el-text>
                         </el-space>
                     </template>
