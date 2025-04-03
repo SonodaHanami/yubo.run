@@ -150,6 +150,7 @@ const app = createApp({
     el: '#app',
     data: () => ({
         latest_login_request: new Date(),
+        last_room_list_update: new Date(),
         selections: {
             'null': '无',
             'left': '左',
@@ -287,8 +288,6 @@ const app = createApp({
             }
         },
 
-
-
         enter() {
             this.is_in_lobby = true;
             this.load_login_data();
@@ -306,6 +305,9 @@ const app = createApp({
             const that = this;
             this.is_loading = true;
             this.is_getting_room_info = true;
+            this.is_button_disabled = true;
+            this.last_room_list_update = new Date();
+            setTimeout(this.release_button, 1000);
             that.handle_command('get_room_info_or_room_list');
         },
 
@@ -319,7 +321,6 @@ const app = createApp({
                 setTimeout(that.update_room_list, 5000);
             }
         },
-
 
         create_room() {
             const that = this;

@@ -339,6 +339,11 @@ table {
     align-items: center;
 }
 
+.right-elements {
+    display: flex;
+    margin-left: auto;
+}
+
 @keyframes colorChange {
   0% { color: #ff0000; } /* 红 */
   20% { color: #ff9900; } /* 橙 */
@@ -442,6 +447,20 @@ table {
             <h1 style="text-align: center">好得不能再好了！泰拉投资大师课</h1>
             <el-tabs type="card" v-model="selecting_tab" v-if="login_status == 'ok'" @tab-click="handle_tab_click">
                 <el-tab-pane label="房间列表" name="room_list">
+                    <el-row>
+                        <el-space>
+                            <el-button type="primary" @click="handle_selecting_tab('create_room')">
+                                创建房间
+                            </el-button>
+                            <el-button type="default" @click="get_room_info_or_room_list"
+                                :disabled="is_button_disabled || is_getting_room_info">
+                                刷新列表
+                            </el-button>
+                            <el-text>
+                                最后更新于 {{ last_room_list_update.toLocaleTimeString() }}
+                            </el-text>
+                        </el-space>
+                    </el-row>
                     <el-table v-loading="is_loading" :data="room_list" :default-sort="{ prop: 'room_code', order: 'ascending' }"
                         table-layout="auto" style="width: 100%" max-height="calc(100vh - 150px)" :row-style="{height: 0}" stripe border
                         empty-text="空空如也">
@@ -500,40 +519,6 @@ table {
                             </template>
                         </el-table-column>
                     </el-table>
-                </el-tab-pane>
-                <el-tab-pane label="创建房间" name="create_room">
-                    <el-form :model="form_create_room" label-width="auto" style="max-width: 600px">
-                        <el-form-item label="最大人数">
-                            <el-slider v-model="form_create_room.max_players" :min="1" :max="is_vip ? 20 : 10" show-input></el-slider>
-                            <el-text v-if="is_vip">🚁尊贵的VIP专享更大房间人数上限</el-text>
-                        </el-form-item>
-                        <el-form-item label="允许下注99%">
-                            <el-radio-group v-model="form_create_room.allow_99">
-                                <el-radio-button value="1">从第1轮开始</el-radio-button>
-                                <el-radio-button value="6">从第6轮开始</el-radio-button>
-                                <el-radio-button value="11">全程不允许</el-radio-button>
-                            </el-radio-group>
-                        </el-form-item>
-                        <el-form-item label="允许下注ALL">
-                            <el-radio-group v-model="form_create_room.allow_all">
-                                <el-radio-button value="1">从第1轮开始</el-radio-button>
-                                <el-radio-button value="6">从第6轮开始</el-radio-button>
-                                <el-radio-button value="11">全程不允许</el-radio-button>
-                            </el-radio-group>
-                        </el-form-item>
-                        <el-form-item label="直播间（选填）">
-                            <el-input
-                                v-model="form_create_room.bilibili_live_room_id"
-                                style="max-width: 600px"
-                                placeholder="直播间号"
-                                >
-                                <template #prepend>https://live.bilibili.com/</template>
-                            </el-input>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" @click="create_room" :disabled="is_create_room_disabled">创建房间</el-button>
-                        </el-form-item>
-                    </el-form>
                 </el-tab-pane>
                 <el-tab-pane label="用户设置" name="user_setting">
                     <template v-if="login_status == 'ok'">
@@ -636,6 +621,40 @@ table {
                         </el-row>
                     </template>
                 </el-tab-pane>
+                <el-tab-pane label="创建房间" name="create_room">
+                    <el-form :model="form_create_room" label-width="auto" style="max-width: 600px">
+                        <el-form-item label="最大人数">
+                            <el-slider v-model="form_create_room.max_players" :min="1" :max="is_vip ? 20 : 10" show-input></el-slider>
+                            <el-text v-if="is_vip">🚁尊贵的VIP专享更大房间人数上限</el-text>
+                        </el-form-item>
+                        <el-form-item label="允许选择99%">
+                            <el-radio-group v-model="form_create_room.allow_99">
+                                <el-radio-button value="1">从第1轮开始</el-radio-button>
+                                <el-radio-button value="6">从第6轮开始</el-radio-button>
+                                <el-radio-button value="11">全程不允许</el-radio-button>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="允许选择ALL">
+                            <el-radio-group v-model="form_create_room.allow_all">
+                                <el-radio-button value="1">从第1轮开始</el-radio-button>
+                                <el-radio-button value="6">从第6轮开始</el-radio-button>
+                                <el-radio-button value="11">全程不允许</el-radio-button>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="直播间（选填）">
+                            <el-input
+                                v-model="form_create_room.bilibili_live_room_id"
+                                style="max-width: 600px"
+                                placeholder="直播间号"
+                                >
+                                <template #prepend>https://live.bilibili.com/</template>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="create_room" :disabled="is_create_room_disabled">创建房间</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
             </el-tabs>
         </div>
     </template>
@@ -649,7 +668,7 @@ table {
             <el-alert type="error">提示：房主在游戏内不要ALL噢</el-alert>
             <el-alert type="warning">提示：结束选择时未选择的玩家将被标记为已出局👻</el-alert>
             <el-row v-if="current_room_bilibili_live_room_id">
-                <el-text>房主正在直播：</el-text>
+                <el-text>本房间游戏正在直播：</el-text>
                 <el-link type="primary" :href="'https://live.bilibili.com/'+current_room_bilibili_live_room_id" target="_blank">
                     https://live.bilibili.com/{{ current_room_bilibili_live_room_id }}
                 </el-link>
