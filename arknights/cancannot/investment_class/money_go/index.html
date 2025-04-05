@@ -19,6 +19,33 @@
     gtag('config', 'G-MZCWWQJQQT');
 </script>
 <style>
+/* 定义CSS变量作用域 */
+.obs-theme {
+    --el-font-weight-primary: 800;
+    --el-text-color-regular: #eaeaea;
+    --el-text-color-primary: #02D3AE;
+    --el-color-primary: #02D3AE;
+    color: var(--el-text-color-primary);
+    background-color: #00000000;
+    --el-bg-color: #00000000;
+    --el-mask-color: #00000000;
+    --el-fill-color-blank: #00000000;
+
+    #header_lobby, #header_room {
+        color: #FFF;
+        background: linear-gradient(to right, transparent 20%, #2b2b2b88 50%, transparent 80%);
+    }
+
+    .el-text {
+        font-weight: 800;
+    }
+
+    .el-button {
+        --el-fill-color-blank: #11111111;
+        --el-button-disabled-bg-color: #11111111;
+    }
+}
+
 .el-row {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -88,9 +115,14 @@ table {
     font-weight: bold;
     color: #2226;
 }
-#div_online_players {
+#div_theme_switch {
     position: fixed;
     top: 3.2em;
+    right: 1em;
+}
+#div_online_players {
+    position: fixed;
+    top: 5.4em;
     right: 1em;
 }
 
@@ -426,12 +458,15 @@ table {
     </template>
 
     <template v-if="is_in_lobby || is_in_room">
-        <div class="div_top_right">
+        <div :class="{'div_top_right': true, 'obs-theme': is_obs}">
             <el-row>
-                <div id="div_link">
-                    <a href="https://yubo.run/ququ" style="color: #2222;">
+                <div id="div_link" v-if="!is_obs">
+                    <a href="https://yubo.run/ququ">
                         yubo.run/ququ
                     </a>
+                </div>
+                <div v-if="is_obs" style="font-size: 2em; font-weight: bold; color: #02D3AE99">
+                    yubo.run/ququ
                 </div>
             </el-row>
             <el-row>
@@ -439,12 +474,22 @@ table {
                     <el-text>当前在线：{{ online_players }}</el-text>
                 </div>
             </el-row>
+            <el-row>
+                <div id="div_theme_switch">
+                    <el-switch
+                        v-model="is_obs"
+                        active-text="OBS模式"
+                        inactive-text="普通模式"
+                        >
+                    </el-switch>
+                </div>
+            </el-row>
         </div>
     </template>
 
     <template v-if="is_in_lobby">
-        <div>
-            <h1 style="text-align: center">好得不能再好了！泰拉投资大师课</h1>
+        <div id="div_lobby" :class="{'obs-theme': is_obs}">
+            <h1 id="header_lobby" style="text-align: center">好得不能再好了！泰拉投资大师课</h1>
             <el-tabs type="card" v-model="selecting_tab" v-if="login_status == 'ok'" @tab-click="handle_tab_click">
                 <el-tab-pane label="房间列表" name="room_list">
                     <el-row>
@@ -660,20 +705,20 @@ table {
     </template>
 
     <template v-if="is_in_room">
-        <div>
-            <el-page-header @back="leave_room" content="返回大厅"></el-page-header>
-            <h1 style="text-align: center">
+        <div id="div_room" :class="{'obs-theme': is_obs}">
+            <el-page-header @back="leave_room" content="返回大厅" v-if="!is_obs"></el-page-header>
+            <h1 id="header_room" style="text-align: center">
                 房间 {{ current_room.room_code }} {{ current_room_title_comment }} {{ current_room_status }}
             </h1>
-            <el-alert type="error">提示：房主在游戏内不要ALL噢</el-alert>
-            <el-alert type="warning">提示：结束选择时未选择的玩家将被标记为已出局👻</el-alert>
+            <el-alert type="error" v-if="!is_obs">提示：房主在游戏内不要ALL噢</el-alert>
+            <el-alert type="warning" v-if="!is_obs">提示：结束选择时未选择的玩家将被标记为已出局👻</el-alert>
             <el-row v-if="current_room_bilibili_live_room_id">
                 <el-text>本房间游戏正在直播：</el-text>
                 <el-link type="primary" :href="'https://live.bilibili.com/'+current_room_bilibili_live_room_id" target="_blank">
                     https://live.bilibili.com/{{ current_room_bilibili_live_room_id }}
                 </el-link>
             </el-row>
-            <el-divider></el-divider>
+            <el-divider v-if="!is_obs"></el-divider>
             <el-row v-if="current_room.owner_id == user_id">
                 <el-space>
                     <el-text>房主选项</el-text>
@@ -700,6 +745,10 @@ table {
                         @mouseleave="button_types.judge_draw = 'default'"
                         @click="judge('draw')">
                         啊？平局？
+                    </el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button type="default" @click="toggle_show_scoreboard">
+                        {{ is_show_scoreboard ? '隐藏记分板' : '显示记分板'}}
                     </el-button>
                     <el-divider direction="vertical"></el-divider>
                     <el-popconfirm
@@ -744,7 +793,7 @@ table {
                     </el-space>
                 </el-space>
             </el-row>
-            <el-table v-loading="is_loading"
+            <el-table v-if="is_show_scoreboard" v-loading="is_loading"
                 :data="current_room_player_list"
                 :default-sort="{ prop: 'total_score', order: 'descending' }"
                 :cell-class-name="handle_cell_class"

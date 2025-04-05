@@ -212,8 +212,10 @@ const app = createApp({
         title_data: [],
         button_types: {},
         selecting_tab: '',
+        is_obs: false,
         is_loading: true,
         is_button_disabled: false,
+        is_show_scoreboard: true,
         is_getting_room_info: false,
         is_create_room_disabled: false,
         is_leave_room_dialog_visible: false,
@@ -379,6 +381,10 @@ const app = createApp({
 
         kick_player(user_id) {
             this.handle_command(`kick_player_${user_id}`);
+        },
+
+        toggle_show_scoreboard() {
+            this.is_show_scoreboard = !this.is_show_scoreboard;
         },
 
         toggle_ready() {
