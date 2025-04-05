@@ -72,11 +72,10 @@ class WebSocketManager {
 
     initSocket() {
         this.socket = new WebSocket(this.url);
-    
+
         this.socket.onopen = () => {
             this.isConnected = true;
             this.flushQueue();
-        
             // 如果已经有消息处理函数，立即设置
             if (this.messageHandler) {
                 this.socket.onmessage = this.messageHandler;
@@ -156,8 +155,8 @@ const app = createApp({
             'left': '左',
             'right': '右',
             'draw': '平局',
-            'win': '赢',
-            'loss': '输',
+            'win': '钱来！',
+            'loss': '钱去！',
             'out': '出局',
             '10': '10%',
             '30': '30%',
@@ -305,20 +304,23 @@ const app = createApp({
             const that = this;
             this.is_loading = true;
             this.is_getting_room_info = true;
-            this.is_button_disabled = true;
             this.last_room_list_update = new Date();
-            setTimeout(this.release_button, 1000);
+            // this.is_button_disabled = true;
+            // setTimeout(this.release_button, 500);
             that.handle_command('get_room_info_or_room_list');
         },
 
-        update_room_list() {
+        update_room_info_or_room_list() {
             const that = this;
-            // 检查是否在大厅
-            if (!that.is_in_lobby) return;
+            // // 检查是否在大厅
+            // if (!that.is_in_lobby) return;
             that.get_room_info_or_room_list();
             // 再次检查
             if (that.is_in_lobby) {
-                setTimeout(that.update_room_list, 5000);
+                setTimeout(that.update_room_info_or_room_list, 5000);
+            }
+            else if (that.is_in_room){
+                setTimeout(that.update_room_info_or_room_list, 2000);
             }
         },
 
@@ -372,7 +374,6 @@ const app = createApp({
                 this.is_create_room_disabled = false;
                 this.is_getting_room_info = false;
                 this.handle_command('leave_room');
-                this.update_room_list();
             }
         },
 
@@ -567,7 +568,7 @@ const app = createApp({
             }
             that.is_loading = false;
 
-            console.log(that.current_room)
+            console.log(that.current_room);
         },
 
         get_login_info() {
@@ -600,7 +601,7 @@ const app = createApp({
                     that.init_websocket();
                     that.handle_command(JSON.stringify(payload));
                     that.get_title_data();
-                    that.update_room_list();
+                    that.update_room_info_or_room_list();
                 }
             }).catch(function (error) {
                 that.$alert(error, '获取数据失败，请联系维护人员');
