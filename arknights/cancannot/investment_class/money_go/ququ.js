@@ -577,6 +577,41 @@ const app = createApp({
             console.log(that.current_room);
         },
 
+        logout() {
+            const that = this;
+            let payload = {
+                'identifier': this.login_identifier,
+                'login_token': this.login_token,
+            }
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://yubo.run/api/kusa/logout', true);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.timeout = 10000;
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+                    let data = JSON.parse(xhr.responseText);
+                    ElementPlus.ElMessage({
+                        message: `退出登录成功`,
+                        type: 'success',
+                    });
+                    that.clear_login_data();
+                }
+            }
+            xhr.send(JSON.stringify(payload));
+        },
+
+        clear_login_data() {
+            this.login_identifier = '';
+            this.login_token = '';
+            this.nickname = '';
+            this.title_adj = '';
+            this.title_title = '';
+            this.login_group_name = '';
+            this.login_group_id = '';
+            this.save_login_data();
+            window.location.reload();
+        },
+
         get_login_info() {
             const that = this;
             let payload = {

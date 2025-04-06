@@ -173,7 +173,7 @@ table {
                         <el-text v-if="login_user_id && nickname != 'null'">
                             {{ nickname_dict[nickname] }}
                         </el-text>
-                        <el-button @click="handle_selecting_tab('user');">用户设置</el-button>
+                        <el-button @click="handle_selecting_tab('user_setting');">用户设置</el-button>
                         <el-button type="danger" @click="logout">退出登录</el-button>
                     </el-space>
                 </el-row>
@@ -221,6 +221,9 @@ table {
         </el-tab-pane>
         <el-tab-pane label="用户设置" name="user_setting">
             <template v-if="login_status == 'ok'">
+                <el-row>
+                    <el-button type="danger" @click="logout">退出登录</el-button>
+                </el-row>
                 <el-row>
                     <el-space>
                         <el-text>QQ：</el-text>

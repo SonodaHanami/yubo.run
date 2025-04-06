@@ -95,12 +95,21 @@ table {
 }
 .el-table tr td.selected-cell {
     background-color: var(--el-color-warning-light-7);
+    .el-text {
+        --el-text-color: var(--el-color-warning);
+    }
 }
 .el-table tr td.correct-cell {
     background-color: var(--el-color-success-light-7);
+    .el-text {
+        --el-text-color: var(--el-color-success);
+    }
 }
 .el-table tr td.incorrect-cell {
     background-color: var(--el-color-danger-light-7);
+    .el-text {
+        --el-text-color: var(--el-color-danger);
+    }
 }
 
 .div_top_right{
@@ -137,17 +146,26 @@ table {
     overflow: auto; /* 根据需要设置 */
     user-select: none;
 }
-.full-height-bg {
+#full-height-bg-zenbu {
     width: 100%; /* 宽度根据需要设置 */
     height: 100vh; /* 视口高度，或根据父容器设置 */
 
-    background-image: url('cancannot.jpg');
-    background-position: center; /* 水平居中 */
-    background-size: cover; /* 覆盖整个容器，保持宽高比 */
-    background-repeat: no-repeat; /* 不重复 */
-    
     /* 简写形式 */
-    /* background: url('your-image.jpg') center/cover no-repeat; */
+    background: url('cannot_zenbu.jpg') center/cover no-repeat;
+}
+#full-height-bg-anata {
+    width: 100%; /* 宽度根据需要设置 */
+    height: 100vh; /* 视口高度，或根据父容器设置 */
+
+    /* 简写形式 */
+    background: url('cannot_anata.jpg') center/cover no-repeat;
+}
+#full-height-bg-wakeup {
+    width: 100%; /* 宽度根据需要设置 */
+    height: 100vh; /* 视口高度，或根据父容器设置 */
+
+    /* 简写形式 */
+    background: url('cannot_wakeup.jpg') center/cover no-repeat;
 }
 
 #floating-element {
@@ -199,7 +217,7 @@ table {
 .subtitle {
     text-align: center;
     position: fixed;
-    left: 30%;
+    left: 20%;
     bottom: 20px;
     color: #FFF;
     font-weight: bold;
@@ -252,7 +270,7 @@ table {
     z-index: 325;
     position: fixed;
     right: 10px;
-    bottom: 325px;
+    bottom: 10px;
     width: 640px;
     height: 270px;
     background-image: url('start_bg.jpg');
@@ -290,22 +308,6 @@ table {
 .close:after {
     transform: rotate(-45deg);
 }
-
-/* .green_triangle {
-    width: 0;
-    height: 0;
-    border-left: 120px solid transparent;
-    border-right: 120px solid transparent;
-    border-bottom: 208px solid transparent;
-    border-bottom-color: #19a085;
-    position: absolute;
-    left: 174px;
-    top: 50px;
-
-    .inner {
-        width: auto;
-    }
-} */
 
 .money_go {
     font-size: 3.6em;
@@ -390,7 +392,7 @@ table {
 <div id="app">
     <el-row id="p_kale">加载中，请稍候；如果你一直只能看到这行字，那么很可能是卡了，请刷新重试，或者换个网络换个浏览器后重试</el-row>
     <template v-if="!is_in_lobby && !is_in_room">
-        <div class="full-page-div full-height-bg" id="div_0">
+        <div class="full-page-div" id="div_0">
             <div class="traditional-vertical">
                 <p class="vertical-content">
                     <span class="kanlaoshi">坎老师</span>
@@ -405,10 +407,20 @@ table {
                 </p>
             </div>
             <div id="floating-element"></div>
-            <div class="gold-text" id="gold-text" style="display: none;">全都不会亏！</div>
-            <div class="subtitle">
-                <div class="large">你这个人 满脑子都只想着源石锭呢</div>
-                <div class="small">あなた　源石錐のことばかりですのね</div>
+            <div id="full-height-bg-zenbu" style="display: none;">
+                <div class="gold-text" id="gold-text">全都不会亏！</div>
+            </div>
+            <div id="full-height-bg-anata" style="display: none;">
+                <div class="subtitle">
+                    <div class="large">你这个人 满脑子都只想着源石锭呢</div>
+                    <div class="small">あなた　源石錐のことばかりですのね</div>
+                </div>
+            </div>
+            <div id="full-height-bg-wakeup" style="display: none;">
+                <div class="subtitle">
+                    <div class="large">兄弟 起来赚钱</div>
+                    <div class="small">Wake up bro, it's time to make money.</div>
+                </div>
             </div>
             <div class="div_enter" @click="enter">
                 <div class="close"></div>
@@ -576,6 +588,7 @@ table {
                                 <el-text v-if="login_user_id && nickname != 'null'">
                                     {{ nickname_dict[nickname] }}
                                 </el-text>
+                                <el-button type="danger" @click="logout">退出登录</el-button>
                             </el-space>
                         </el-row>
                         <el-row>
@@ -895,8 +908,6 @@ table {
                         </el-space>
                     </template>
                 </el-table-column>
-                <!-- <el-table-column prop="total_score" label="源石锭" width="180px" fixed>
-                </el-table-column> -->
                 <el-table-column prop="total_score" label="源石锭" min-width="180px" fixed
                     sortable :sort-orders="['descending', 'ascending']">
                     <template v-slot="scope">
@@ -934,7 +945,6 @@ table {
                                 {{ scope.row.choices[n].is_correct ? '+' : '' }}{{ scope.row.choices[n].score_earned ? scope.row.choices[n].score_earned.toLocaleString() : ''}}
                             </template>
                             <el-text>{{ selections[scope.row.choices[n]['side']] }} {{ selections[scope.row.choices[n]['scale']] }}</el-text>
-                            <!-- <el-text>{{ selections[scope.row.choices[`side_${n}`]] }} {{ selections[scope.row.choices[`scale_${n}`]] }}</el-text> -->
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -1032,6 +1042,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+var background_list = [
+    'full-height-bg-zenbu',
+    'full-height-bg-anata',
+    'full-height-bg-wakeup',
+]
+document.getElementById(background_list[Math.floor(Math.random() * background_list.length)]).style.display = '';
 </script>
 
 </body>
